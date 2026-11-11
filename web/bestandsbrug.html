@@ -107,7 +107,7 @@ dialog::backdrop { background: rgba(0,0,0,.5); }
     <div role="tabpanel" id="paneel-down" aria-labelledby="tab-down">
       <table id="bestanden">
         <caption data-tekst="LijstNaam"></caption>
-        <thead><tr><th scope="col" data-tekst="KolomNaam"></th><th scope="col" data-tekst="KolomGrootte"></th><th scope="col" data-tekst="KolomDatum"></th><th scope="col" data-tekst="KolomUitleg"></th><th scope="col"><span class="verborgen-visueel" data-tekst="TabDownloaden"></span></th></tr></thead>
+        <thead><tr><th scope="col" data-tekst="KolomNaam"></th><th scope="col" data-tekst="KolomMap"></th><th scope="col" data-tekst="KolomGrootte"></th><th scope="col" data-tekst="KolomDatum"></th><th scope="col" data-tekst="KolomUitleg"></th><th scope="col"><span class="verborgen-visueel" data-tekst="TabDownloaden"></span></th></tr></thead>
         <tbody></tbody>
       </table>
       <p class="zacht" data-tekst="WebDownloadUitleg"></p>
@@ -265,14 +265,19 @@ async function haalLijst(handmatig) {
   try {
     const j = await api("showpublink", { code: D.downloadCode });
     if (j.result !== 0) throw { pcloud: j };
-    const items = ((j.metadata && j.metadata.contents) || []).filter((x) => !x.isfolder);
-    const uitleg = items.find((x) => x.name.toLowerCase() === D.uitlegBestand);
-    lijst = items.filter((x) => x !== uitleg).map((x) => ({ fileid: x.fileid, naam: x.name, grootte: x.size, datum: x.modified, uitleg: "" }))
-      .sort((a, b) => a.naam.toLowerCase().localeCompare(b.naam.toLowerCase()));
+    // De hoofdmap en de app-mappen één laag diep (net als de Windows-app).
+    const items = [];
+    for (const x of (j.metadata && j.metadata.contents) || []) {
+      if (!x.isfolder) items.push({ ...x, map: "" });
+      else for (const y of x.contents || []) if (!y.isfolder) items.push({ ...y, map: x.name });
+    }
+    const uitlegs = items.filter((x) => x.name.toLowerCase() === D.uitlegBestand);
+    lijst = items.filter((x) => !uitlegs.includes(x)).map((x) => ({ fileid: x.fileid, naam: x.name, map: x.map, grootte: x.size, datum: x.modified, uitleg: "" }))
+      .sort((a, b) => (a.map.toLowerCase() + "\u0000" + a.naam.toLowerCase()).localeCompare(b.map.toLowerCase() + "\u0000" + b.naam.toLowerCase()));
     toonLijst();
     log(`INFO List loaded: ${lijst.length} files`);
     zeg(lijst.length === 0 ? t("LijstLeeg") : lijst.length === 1 ? t("LijstEenBestand") : f("LijstGeladen", String(lijst.length)));
-    if (uitleg) haalUitleg(uitleg.fileid);
+    uitlegs.forEach((u) => haalUitleg(u.fileid));
   } catch (e) {
     const tekst = e && e.pcloud ? foutTekst(e.pcloud) : t("FoutGeenInternet");
     log("ERROR List failed: " + (e && e.pcloud ? JSON.stringify(e.pcloud) : String(e)));
@@ -290,7 +295,7 @@ async function haalUitleg(fileid) {
       const i = regel.indexOf("=");
       if (i > 0 && !regel.trim().startsWith("#")) kaart[regel.slice(0, i).trim().toLowerCase()] = regel.slice(i + 1).trim();
     });
-    lijst.forEach((b) => { b.uitleg = kaart[b.naam.toLowerCase()] || ""; });
+    lijst.forEach((b) => { if (kaart[b.naam.toLowerCase()]) b.uitleg = kaart[b.naam.toLowerCase()]; });
     toonLijst();
   } catch (e) { log("INFO uitleg.txt not readable in this browser"); }
 }
@@ -301,7 +306,7 @@ function toonLijst() {
   for (const b of lijst) {
     const tr = document.createElement("tr");
     const th = document.createElement("th"); th.scope = "row"; th.textContent = b.naam; tr.appendChild(th);
-    for (const [w, k] of [[grootte(b.grootte), "getal"], [datum(b.datum), "getal"], [b.uitleg, ""]]) {
+    for (const [w, k] of [[b.map, ""], [grootte(b.grootte), "getal"], [datum(b.datum), "getal"], [b.uitleg, ""]]) {
       const td = document.createElement("td"); td.textContent = w; if (k) td.className = k; tr.appendChild(td);
     }
     const td = document.createElement("td");

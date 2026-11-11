@@ -8,16 +8,20 @@ use bestandsbrug::overdracht::{deel_pad, Voortgang};
 use bestandsbrug::pcloud::{download, lijst, upload};
 
 #[test]
-fn lijst_lezen_zonder_mappen() {
+fn lijst_lezen_met_app_mappen() {
     let json: serde_json::Value = serde_json::from_str(r#"{"result":0,"metadata":{"contents":[
         {"name":"b.exe","fileid":2,"size":10,"modified":"Wed, 11 Nov 2026 17:42:23 +0000","hash":5,"isfolder":false},
-        {"name":"Map","folderid":3,"isfolder":true},
+        {"name":"Paper Pilot","folderid":3,"isfolder":true,"contents":[
+            {"name":"Paper Pilot 0.0.0.16 installatie.exe","fileid":7,"size":30,"isfolder":false},
+            {"name":"Diep","folderid":4,"isfolder":true,"contents":[{"name":"x.dll","fileid":8,"size":1,"isfolder":false}]}]},
         {"name":"A.exe","fileid":1,"size":20,"modified":"Wed, 11 Nov 2026 17:42:23 +0000","hash":9223372036854775808,"isfolder":false}]}}"#).unwrap();
     let l = lijst::lees_inhoud(&json);
-    assert_eq!(l.len(), 2);
+    assert_eq!(l.len(), 3, "hoofdmap en app-map, niet dieper");
     assert_eq!(l[0].naam, "A.exe");
+    assert_eq!(l[2].map, "Paper Pilot");
+    assert!(!l.iter().any(|b| b.naam == "x.dll"));
     assert_eq!(l[0].hash, 9223372036854775808);
-    assert_eq!(lijst::nieuwe_namen(&l[..1], &l), vec!["b.exe".to_string()]);
+    assert_eq!(lijst::nieuwe_namen(&l[..2], &l), vec!["Paper Pilot 0.0.0.16 installatie.exe".to_string()]);
 }
 
 #[test]

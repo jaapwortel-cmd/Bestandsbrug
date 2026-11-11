@@ -23,7 +23,7 @@ pub fn vul_lijst(lijst: &[Bestand]) {
         let naam = win::ws(&b.naam);
         let item = LVITEMW { mask: LVIF_TEXT | LVIF_PARAM, iItem: i as i32, pszText: windows::core::PWSTR(naam.as_ptr() as *mut u16), lParam: windows::Win32::Foundation::LPARAM(i as isize), ..Default::default() };
         snd(o.lijst, LVM_INSERTITEMW, 0, &item as *const _ as isize);
-        for (kol, tekst) in [(1, opmaak::grootte(b.grootte)), (2, opmaak::datum(&b.gewijzigd)), (3, b.uitleg.clone())] {
+        for (kol, tekst) in [(1, b.map.clone()), (2, opmaak::grootte(b.grootte)), (3, opmaak::datum(&b.gewijzigd)), (4, b.uitleg.clone())] {
             let v = win::ws(&tekst);
             let sub = LVITEMW { iSubItem: kol, pszText: windows::core::PWSTR(v.as_ptr() as *mut u16), ..Default::default() };
             snd(o.lijst, LVM_SETITEMTEXTW, i, &sub as *const _ as isize);

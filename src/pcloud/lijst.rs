@@ -18,11 +18,15 @@ pub struct Bestand {
     /// Datum zoals pCloud hem geeft (UTC).
     pub gewijzigd: String,
     pub hash: u64,
+    /// De app-map waar het bestand in staat (leeg = de hoofdmap).
+    #[serde(default)]
+    pub map: String,
     #[serde(default)]
     pub uitleg: String,
 }
 
-/// Haalt de lijst op: alleen bestanden (geen mappen), op naam gesorteerd. uitleg.txt zelf staat niet in de lijst.
+/// Haalt de lijst op: de bestanden in de hoofdmap en in elke app-map daaronder (één laag diep), gesorteerd
+/// op map en naam. Diepere mappen tellen niet mee. uitleg.txt zelf staat niet in de lijst.
 pub fn haal_lijst() -> Uitkomst<Vec<Bestand>> {
     let json = super::api_get(
         "showpublink",
@@ -30,9 +34,9 @@ pub fn haal_lijst() -> Uitkomst<Vec<Bestand>> {
         Duration::from_secs(LIMIET_LIJST_SECONDEN),
     )?;
     let mut lijst = lees_inhoud(&json);
-    let uitleg_bestand = lijst.iter().position(|b| b.naam.eq_ignore_ascii_case(UITLEG_BESTAND));
-    if let Some(i) = uitleg_bestand {
-        let u = lijst.remove(i);
+    let uitlegbestanden: Vec<Bestand> = lijst.iter().filter(|b| b.naam.eq_ignore_ascii_case(UITLEG_BESTAND)).cloned().collect();
+    lijst.retain(|b| !b.naam.eq_ignore_ascii_case(UITLEG_BESTAND));
+    for u in uitlegbestanden {
         // De uitleg is een extraatje: lukt het niet, dan gewoon zonder.
         if let Ok(tekst) = haal_tekst(u.fileid) {
             let kaart = lees_uitleg(&tekst);
@@ -46,29 +50,37 @@ pub fn haal_lijst() -> Uitkomst<Vec<Bestand>> {
     Ok(lijst)
 }
 
-/// Leest de bestanden uit het antwoord van showpublink.
+/// Leest de bestanden uit het antwoord van showpublink (hoofdmap en de app-mappen één laag diep).
 pub fn lees_inhoud(json: &Value) -> Vec<Bestand> {
-    let mut lijst: Vec<Bestand> = json
-        .pointer("/metadata/contents")
-        .and_then(Value::as_array)
-        .map(|a| {
-            a.iter()
-                .filter(|x| !x.get("isfolder").and_then(Value::as_bool).unwrap_or(false))
-                .filter_map(|x| {
-                    Some(Bestand {
-                        fileid: x.get("fileid")?.as_u64()?,
-                        naam: x.get("name")?.as_str()?.to_string(),
-                        grootte: x.get("size").and_then(Value::as_u64).unwrap_or(0),
-                        gewijzigd: x.get("modified").and_then(Value::as_str).unwrap_or("").to_string(),
-                        hash: x.get("hash").and_then(Value::as_u64).unwrap_or(0),
-                        uitleg: String::new(),
-                    })
-                })
-                .collect()
-        })
-        .unwrap_or_default();
-    lijst.sort_by_key(|b| b.naam.to_lowercase());
+    let mut lijst = Vec::new();
+    if let Some(m) = json.get("metadata") {
+        verzamel(m, "", 0, &mut lijst);
+    }
+    lijst.sort_by_key(|b| (b.map.to_lowercase(), b.naam.to_lowercase()));
     lijst
+}
+
+fn verzamel(map: &Value, mapnaam: &str, diepte: u32, lijst: &mut Vec<Bestand>) {
+    let Some(inhoud) = map.get("contents").and_then(Value::as_array) else { return };
+    for x in inhoud {
+        let naam = x.get("name").and_then(Value::as_str).unwrap_or("");
+        if x.get("isfolder").and_then(Value::as_bool).unwrap_or(false) {
+            if diepte == 0 {
+                verzamel(x, naam, 1, lijst);
+            }
+            continue;
+        }
+        let Some(fileid) = x.get("fileid").and_then(Value::as_u64) else { continue };
+        lijst.push(Bestand {
+            fileid,
+            naam: naam.to_string(),
+            grootte: x.get("size").and_then(Value::as_u64).unwrap_or(0),
+            gewijzigd: x.get("modified").and_then(Value::as_str).unwrap_or("").to_string(),
+            hash: x.get("hash").and_then(Value::as_u64).unwrap_or(0),
+            map: mapnaam.to_string(),
+            uitleg: String::new(),
+        });
+    }
 }
 
 /// Leest uitleg.txt: regels "bestandsnaam = korte uitleg". De naam is niet hoofdlettergevoelig.

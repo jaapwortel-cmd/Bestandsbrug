@@ -109,7 +109,7 @@ pub fn maak_onderdelen(h: HWND) {
     ONDERDELEN.with(|c| c.set(o));
     // Lijst: hele regel kiezen, met kolomkoppen.
     snd(o.lijst, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_LABELTIP) as isize);
-    for i in 0..4 {
+    for i in 0..5 {
         let mut kol = LVCOLUMNW { mask: LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, cx: 100, iSubItem: i, ..Default::default() };
         let leeg = win::ws("");
         kol.pszText = windows::core::PWSTR(leeg.as_ptr() as *mut u16);
@@ -140,7 +140,7 @@ pub fn zet_teksten() {
     let p = met(|s| s.pagina).unwrap_or(0);
     snd(o.tab, TCM_SETCURSEL, p, 0);
     win::zet_tekst(o.lijst_label, &t("LijstNaam"));
-    for (i, k) in ["KolomNaam", "KolomGrootte", "KolomDatum", "KolomUitleg"].iter().enumerate() {
+    for (i, k) in ["KolomNaam", "KolomMap", "KolomGrootte", "KolomDatum", "KolomUitleg"].iter().enumerate() {
         let tekst = win::ws(&t(k));
         let kol = LVCOLUMNW { mask: LVCF_TEXT, pszText: windows::core::PWSTR(tekst.as_ptr() as *mut u16), ..Default::default() };
         snd(o.lijst, LVM_SETCOLUMNW, i, &kol as *const _ as isize);
@@ -274,7 +274,7 @@ pub fn indeling() {
     win::verplaats(o.knop_download, x, knop_y, b1, knop_h);
     win::verplaats(o.knop_vernieuwen, x + b1 + m, knop_y, knop_b(o.knop_vernieuwen), knop_h);
     let lb = b - regel;
-    for (i, deel) in [45, 13, 24, 18].iter().enumerate() {
+    for (i, deel) in [38, 17, 11, 20, 14].iter().enumerate() {
         snd(o.lijst, LVM_SETCOLUMNWIDTH, i, (lb * deel / 100) as isize);
     }
 

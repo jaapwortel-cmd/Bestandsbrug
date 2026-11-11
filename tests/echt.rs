@@ -19,9 +19,9 @@ fn echte_lijst_en_download() {
     let l = lijst::haal_lijst().expect("lijst ophalen");
     println!("Lijst opgehaald in {} ms: {} bestanden", t.elapsed().as_millis(), l.len());
     for b in &l {
-        println!("  {} ({} bytes, {})", b.naam, b.grootte, b.gewijzigd);
+        println!("  {} / {} ({} bytes, {})", b.map, b.naam, b.grootte, b.gewijzigd);
     }
-    let b = l.iter().find(|b| b.naam.to_lowercase().contains("paper pilot")).or(l.first()).expect("een bestand");
+    let b = l.iter().find(|b| b.naam.to_lowercase().contains("paper pilot") && b.naam.ends_with(".exe")).or(l.first()).expect("een bestand");
     let doel = map.join(&b.naam);
     let v = Voortgang::new();
     let t = Instant::now();

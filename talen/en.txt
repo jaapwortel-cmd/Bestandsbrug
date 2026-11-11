@@ -183,3 +183,4 @@ BalkWaarde = {0} percent
 GekozenMelding = Chosen: {0}. Now choose Upload.
 UpdateBinnen = The new version has been downloaded and checked.
 EscUpdateUitleg = An update cannot continue later. You can continue or cancel everything.
+KolomMap = App

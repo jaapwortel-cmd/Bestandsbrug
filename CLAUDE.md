@@ -24,7 +24,7 @@ src/lib.rs                de kern (werkt ook op Linux, voor de tests)
   log.rs                  logbestand (Engels, kort, max 500 KB)
   melding.rs              voortgangstekst en de timer van 6 seconden
   overdracht.rs           voortgang/stop (gedeeld met de achtergrond) en onderbroken downloads (overdrachten.json)
-  pcloud/                 mod.rs (API, servers, foutcodes), lijst.rs, download.rs (Range/hervatten), upload.rs
+  pcloud/                 mod.rs (API, servers, foutcodes), lijst.rs (hoofdmap + app-mappen 1 laag diep), download.rs (Range/hervatten), upload.rs
   update.rs               versie.txt lezen, Dropbox (los of hele map als zip), SHA-256
   net.rs                  gedeelde internetverbinding (ureq 3), tijdslimieten, foutvertaling
   fout.rs, opmaak.rs, tijd.rs, paden.rs, voorkeuren.rs, html.rs (maakt Bestandsbrug.html)
