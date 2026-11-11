@@ -8,7 +8,7 @@ use bestandsbrug::taal::{self, t, zonder_amp, Taal};
 use windows::Win32::Foundation::*;
 use windows::Win32::Graphics::Gdi::*;
 use windows::Win32::UI::Controls::*;
-use windows::Win32::UI::Input::KeyboardAndMouse::{GetFocus, SetFocus};
+use windows::Win32::UI::Input::KeyboardAndMouse::SetFocus;
 use windows::Win32::UI::WindowsAndMessaging::*;
 
 use super::win::{self, snd};
@@ -448,10 +448,4 @@ pub fn nieuw_thema(w: Option<Weergave>) {
     thema::maak(weergave, dpi);
     pas_thema_toe();
     indeling();
-}
-
-/// Is de focus nu in het hoofdvenster?
-pub fn focus_hier() -> bool {
-    let f = unsafe { GetFocus() };
-    f == hwnd() || unsafe { IsChild(hwnd(), f) }.as_bool()
 }

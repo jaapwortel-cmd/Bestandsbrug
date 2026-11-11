@@ -70,6 +70,9 @@ fn verzamel(map: &Value, mapnaam: &str, lijst: &mut Vec<Bestand>) {
             continue;
         }
         let Some(fileid) = x.get("fileid").and_then(Value::as_u64) else { continue };
+        if is_systeembestand(naam) {
+            continue;
+        }
         lijst.push(Bestand {
             fileid,
             naam: naam.to_string(),
@@ -164,6 +167,37 @@ fn sorteer(m: &mut Map, lijst: &[Bestand]) {
     for x in m.mappen.iter_mut() {
         sorteer(x, lijst);
     }
+}
+
+/// Verborgen bestanden van Windows en Mac die niemand wil downloaden (zoals desktop.ini).
+pub fn is_systeembestand(naam: &str) -> bool {
+    let n = naam.to_lowercase();
+    ["desktop.ini", "thumbs.db", ".ds_store", "ehthumbs.db"].contains(&n.as_str()) || n.starts_with("~$") || n.starts_with("._")
+}
+
+/// Een bestand herkennen, ook als het vervangen is door een nieuwe versie met dezelfde naam.
+pub fn sleutel(b: &Bestand) -> String {
+    format!("{}:{}", b.fileid, b.hash)
+}
+
+const GEZIEN: &str = "gezien.json";
+
+/// De bestanden die de vorige keer al in de lijst stonden. None = de app heeft nog nooit een lijst gezien.
+pub fn laad_gezien() -> Option<std::collections::HashSet<String>> {
+    let s = std::fs::read_to_string(crate::paden::bestand(GEZIEN)).ok()?;
+    serde_json::from_str::<Vec<String>>(&s).ok().map(|v| v.into_iter().collect())
+}
+
+pub fn bewaar_gezien(lijst: &[Bestand]) {
+    let v: Vec<String> = lijst.iter().map(sleutel).collect();
+    if let Ok(s) = serde_json::to_string(&v) {
+        let _ = crate::voorkeuren::schrijf_veilig(&crate::paden::bestand(GEZIEN), s.as_bytes());
+    }
+}
+
+/// Welke bestanden nieuw zijn ten opzichte van `gezien` (als nummer in de lijst).
+pub fn nieuw_sinds(gezien: &std::collections::HashSet<String>, lijst: &[Bestand]) -> Vec<usize> {
+    lijst.iter().enumerate().filter(|(_, b)| !gezien.contains(&sleutel(b))).map(|(i, _)| i).collect()
 }
 
 /// Namen die nieuw zijn in de nieuwe lijst (om kort te melden).

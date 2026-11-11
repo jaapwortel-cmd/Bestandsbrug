@@ -67,16 +67,22 @@ fn toon(bestanden: &[Bestand], pad: &str, kies: Option<Kies>) {
     };
     let mut regels: Vec<Regel> = map.mappen.iter().map(|m| Regel::Map { naam: m.naam.clone(), pad: m.pad.clone(), aantal: tel(m) }).collect();
     regels.extend(map.bestanden.iter().map(|&i| Regel::Bestand(i)));
+    let nieuw = met(|s| s.nieuw.clone()).unwrap_or_default();
+    let is_nieuw = |b: &Bestand| nieuw.contains(&lijst::sleutel(b));
+    let map_nieuw = |p: &str| bestanden.iter().any(|b| (b.map == p || b.map.starts_with(&format!("{p}/"))) && is_nieuw(b));
+    let met_nieuw = |soort: String, ja: bool| if ja { f("SoortNieuw", &[&soort]) } else { soort };
     let h = lijst_hwnd();
     snd(h, WM_SETREDRAW, 0, 0);
     snd(h, LVM_DELETEALLITEMS, 0, 0);
     let mut gekozen = 0usize;
     for (i, r) in regels.iter().enumerate() {
         let (naam, soort, grootte, datum, uitleg) = match r {
-            Regel::Map { naam, aantal, .. } => (naam.clone(), t("SoortMap"), f("AantalItems", &[&aantal.to_string()]), String::new(), String::new()),
+            Regel::Map { naam, aantal, pad } => {
+                (naam.clone(), met_nieuw(t("SoortMap"), map_nieuw(pad)), f("AantalItems", &[&aantal.to_string()]), String::new(), String::new())
+            }
             Regel::Bestand(j) => {
                 let b = &bestanden[*j];
-                (b.naam.clone(), t("SoortBestand"), opmaak::grootte(b.grootte), opmaak::datum(&b.gewijzigd), b.uitleg.clone())
+                (b.naam.clone(), met_nieuw(t("SoortBestand"), is_nieuw(b)), opmaak::grootte(b.grootte), opmaak::datum(&b.gewijzigd), b.uitleg.clone())
             }
         };
         let hit = match (&kies, r) {

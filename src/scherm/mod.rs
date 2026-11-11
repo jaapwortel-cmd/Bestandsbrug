@@ -77,6 +77,8 @@ pub struct Staat {
     pub start: Instant,
     pub metingen: Vec<String>,
     pub laatste_focus: HWND,
+    /// Bestanden die nieuw zijn sinds de vorige keer (lijst::sleutel); in de lijst staat er "nieuw" bij.
+    pub nieuw: std::collections::HashSet<String>,
 }
 
 thread_local! {
@@ -215,6 +217,7 @@ pub fn start() -> i32 {
             start: begin,
             metingen: Vec::new(),
             laatste_focus: HWND::default(),
+            nieuw: Default::default(),
         })
     });
     hoofdscherm::maak_onderdelen(h);

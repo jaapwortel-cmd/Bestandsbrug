@@ -57,8 +57,6 @@ LijstLaden = Getting the list.
 LijstGeladen = The list is ready. It has {0} files.
 LijstEenBestand = The list is ready. It has 1 file.
 LijstLeeg = There are no files in the list right now.
-LijstNieuw = The list has been updated. New: {0}.
-LijstAnders = The list has been updated.
 LijstOud = This is the list from last time. Getting the new list.
 
 # Errors in plain language
@@ -208,3 +206,7 @@ UploadMapKiezenTitel = Choose the folder you want to send to Jaap
 GekozenMap = Folder: {0}
 GekozenMapMelding = Chosen: the folder {0}. Now choose Upload.
 MeldUploadMapKlaar = Done, thank you! The folder {0} has been sent to Jaap, with {1} files.
+SoortNieuw = {0}, new
+NieuwSinds = New since last time: {0}.
+NieuwInMap = {0} in the folder {1}
+NieuwVeel = There are {0} new files since last time. The list says new next to them.

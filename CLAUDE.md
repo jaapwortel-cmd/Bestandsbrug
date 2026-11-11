@@ -126,6 +126,9 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
   met folderid (zip, CORS ok), want een browser kan geen mappen maken.
   Hele map uploaden (Jaaps wens): knop "Map kiezen" -> upload_map maakt in de gegevensmap één zip (Stored,
   "Mapnaam/..."), uploadt die en ruimt op. Reden: in de pCloud-documentatie kan uploadtolink geen mappen maken
-  (niet gecontroleerd in Jaaps map). HTML: webkitdirectory + eigen zip-schrijver (stored, CRC32) in JS. Installatiefout "Cannot focus a disabled or
+  (niet gecontroleerd in Jaaps map). HTML: webkitdirectory + eigen zip-schrijver (stored, CRC32) in JS.
+- Nieuw sinds de vorige keer (Jaaps keuze, nog 1.0.1): gezien.json (lijst::sleutel = fileid:hash); bij het opstarten
+  een melding en "nieuw" in de kolom Soort (ook bij de map). HTML: localStorage "gezien". desktop.ini e.d. verborgen.
+- Versie blijft 1.0.1 tot Jaap hem aan anderen geeft (Jaap, 12 nov). Installatiefout "Cannot focus a disabled or
   invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
 - Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).

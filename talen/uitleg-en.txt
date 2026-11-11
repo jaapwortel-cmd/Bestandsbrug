@@ -6,7 +6,7 @@ With {naam} you can download Jaap's apps. You can also send a file to Jaap (uplo
 2. Download an app
 Go to the Download tab. It works like File Explorer in Windows. First you see the folders, one for each app. Use the up and down arrows to move. Press Enter to open a folder. The files are inside. Press Backspace (or the Up one folder button) to go back to the folder above. Choose a file and press Enter, or choose the Download button.
 To copy a whole folder to your computer: choose the folder (without opening it) and choose the Download button, or press Ctrl+C. Then choose where the folder should go. The folder appears there with all its files and folders. Choose where you want to save the file. By default this is the Downloads folder.
-Press F5 to get the list again. If there is a new app in the list, you will hear it.
+Press F5 to get the list again. If something is new in the list since last time, you hear it when starting. The Type column then says "new", also next to the folder it is in.
 
 3. Send a file to Jaap
 Go to the Upload tab, with Ctrl+Tab or Ctrl+2. Choose Choose file, or Choose folder for a whole folder. Then choose Upload. A whole folder reaches Jaap as one zip file, with all folders and files in it. You hear "Done, thank you!" when it worked. You cannot see files from other people. Only Jaap can see them.

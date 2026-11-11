@@ -275,15 +275,24 @@ async function haalLijst(handmatig) {
     (function verzamel(m, pad) {
       for (const x of m.contents || []) {
         if (x.isfolder) { const p = pad ? pad + "/" + x.name : x.name; mapIds[p] = x.folderid; verzamel(x, p); }
-        else items.push({ ...x, map: pad });
+        else if (!isSysteem(x.name)) items.push({ ...x, map: pad });
       }
     })(j.metadata || {}, "");
     const uitlegs = items.filter((x) => x.name.toLowerCase() === D.uitlegBestand);
-    lijst = items.filter((x) => !uitlegs.includes(x)).map((x) => ({ fileid: x.fileid, naam: x.name, map: x.map, grootte: x.size, datum: x.modified, uitleg: "" }))
+    lijst = items.filter((x) => !uitlegs.includes(x)).map((x) => ({ fileid: x.fileid, hash: x.hash, naam: x.name, map: x.map, grootte: x.size, datum: x.modified, uitleg: "" }))
       .sort((a, b) => (a.map.toLowerCase() + "\u0000" + a.naam.toLowerCase()).localeCompare(b.map.toLowerCase() + "\u0000" + b.naam.toLowerCase()));
+    // Wat is er nieuw sinds de vorige keer? (Je browser onthoudt welke bestanden je al zag.)
+    let gezien = null;
+    try { gezien = JSON.parse(opslag.lees("gezien") || "null"); } catch (e) {}
+    const erbij = gezien ? lijst.filter((b) => !gezien.includes(sleutel(b))) : [];
+    opslag.zet("gezien", JSON.stringify(lijst.map(sleutel)));
+    erbij.forEach((b) => nieuw.add(sleutel(b)));
     toonLijst();
-    log(`INFO List loaded: ${lijst.length} files`);
-    zeg(lijst.length === 0 ? t("LijstLeeg") : lijst.length === 1 ? t("LijstEenBestand") : f("LijstGeladen", String(lijst.length)));
+    log(`INFO List loaded: ${lijst.length} files, ${erbij.length} new`);
+    let m = lijst.length === 0 ? t("LijstLeeg") : lijst.length === 1 ? t("LijstEenBestand") : f("LijstGeladen", String(lijst.length));
+    if (erbij.length > 3) m += " " + f("NieuwVeel", String(erbij.length));
+    else if (erbij.length) m += " " + f("NieuwSinds", erbij.map((b) => b.map ? f("NieuwInMap", b.naam, b.map.split("/").join(" > ")) : b.naam).join(", "));
+    zeg(m);
     uitlegs.forEach((u) => haalUitleg(u.fileid));
   } catch (e) {
     const tekst = e && e.pcloud ? foutTekst(e.pcloud) : t("FoutGeenInternet");
@@ -311,6 +320,10 @@ async function haalUitleg(fileid) {
 // downloaden. Backspace of de knop "Map omhoog" = naar de map erboven.
 let huidigeMap = "";
 let mapIds = {};
+let nieuw = new Set();
+const sleutel = (b) => b.fileid + ":" + b.hash;
+const SYSTEEM = ["desktop.ini", "thumbs.db", ".ds_store", "ehthumbs.db"];
+const isSysteem = (n) => SYSTEEM.includes(n.toLowerCase()) || n.startsWith("~$") || n.startsWith("._");
 function inhoudVan(pad) {
   const mappen = new Map(), bestanden = [];
   for (const b of lijst) {
@@ -354,14 +367,15 @@ function toonLijst(kiesMap) {
     k.addEventListener("click", () => openMap(huidigeMap ? huidigeMap + "/" + m.naam : m.naam));
     if (kiesMap === m.naam) teFocussen = k;
     const pad = huidigeMap ? huidigeMap + "/" + m.naam : m.naam;
-    rij(k, t("SoortMap"), f("AantalItems", String(m.aantal)), "", "", m.naam, () => downloadMap(pad, m.naam));
+    const mapNieuw = lijst.some((b) => (b.map === pad || b.map.startsWith(pad + "/")) && nieuw.has(sleutel(b)));
+    rij(k, mapNieuw ? f("SoortNieuw", t("SoortMap")) : t("SoortMap"), f("AantalItems", String(m.aantal)), "", "", m.naam, () => downloadMap(pad, m.naam));
   }
   for (const b of bestanden) {
     const k = document.createElement("button");
     k.className = "naamknop"; k.textContent = b.naam;
     k.setAttribute("aria-label", b.naam + ", " + t("KnopDownloaden"));
     k.addEventListener("click", () => download(b));
-    rij(k, t("SoortBestand"), grootte(b.grootte), datum(b.datum), b.uitleg, b.naam, () => download(b));
+    rij(k, nieuw.has(sleutel(b)) ? f("SoortNieuw", t("SoortBestand")) : t("SoortBestand"), grootte(b.grootte), datum(b.datum), b.uitleg, b.naam, () => download(b));
   }
   return teFocussen || tb.querySelector("button");
 }

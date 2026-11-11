@@ -144,3 +144,22 @@ fn map_inpakken_voor_upload() {
     let r = upload::maak_zip(&map.join("Leeg"), "Leeg", &map.join("Leeg.zip"), &bestandsbrug::overdracht::Voortgang::new());
     assert!(matches!(r, Err(Fout::LegeMap)));
 }
+
+#[test]
+fn nieuwe_bestanden_en_systeembestanden() {
+    let json: serde_json::Value = serde_json::from_str(r#"{"result":0,"metadata":{"contents":[
+        {"name":"desktop.ini","fileid":9,"size":1,"isfolder":false},
+        {"name":"App","folderid":3,"isfolder":true,"contents":[
+            {"name":"App 1.exe","fileid":1,"size":10,"hash":5,"isfolder":false},
+            {"name":"Thumbs.db","fileid":8,"size":1,"isfolder":false}]}]}}"#).unwrap();
+    let l = lijst::lees_inhoud(&json);
+    assert_eq!(l.len(), 1, "desktop.ini en Thumbs.db horen er niet bij");
+    let mut gezien = std::collections::HashSet::new();
+    assert_eq!(lijst::nieuw_sinds(&gezien, &l), vec![0]);
+    gezien.insert(lijst::sleutel(&l[0]));
+    assert!(lijst::nieuw_sinds(&gezien, &l).is_empty());
+    // Hetzelfde bestand, maar vervangen (andere hash): weer nieuw.
+    let mut l2 = l.clone();
+    l2[0].hash = 6;
+    assert_eq!(lijst::nieuw_sinds(&gezien, &l2), vec![0]);
+}

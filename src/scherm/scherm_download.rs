@@ -52,28 +52,29 @@ pub fn lijst_klaar(uitkomst: Uitkomst<Vec<Bestand>>, handmatig: bool) {
                 log_meting(format!("List from internet after {} ms", start.elapsed().as_millis()));
             }
             lijst::bewaar_cache(&nieuw);
-            let melding = if handmatig || (eerste_keer && oud.is_empty()) {
-                Some(match nieuw.len() {
+            // Wat is er nieuw sinds de vorige keer? (De allereerste keer is niets "nieuw".)
+            let gezien = lijst::laad_gezien();
+            let erbij = gezien.as_ref().map(|g| lijst::nieuw_sinds(g, &nieuw)).unwrap_or_default();
+            lijst::bewaar_gezien(&nieuw);
+            met(|s| s.nieuw.extend(erbij.iter().map(|&i| lijst::sleutel(&nieuw[i]))));
+            if !erbij.is_empty() {
+                log::info(&format!("New since last time: {} files", erbij.len()));
+            }
+            let mut delen = Vec::new();
+            if handmatig || (gezien.is_none() && oud.is_empty()) {
+                delen.push(match nieuw.len() {
                     0 => t("LijstLeeg"),
                     1 => t("LijstEenBestand"),
                     n => f("LijstGeladen", &[&n.to_string()]),
-                })
-            } else {
-                let erbij = lijst::nieuwe_namen(&oud, &nieuw);
-                if !erbij.is_empty() {
-                    Some(f("LijstNieuw", &[&erbij.join(", ")]))
-                } else if oud != nieuw {
-                    Some(t("LijstAnders"))
-                } else {
-                    None
-                }
-            };
-            toon_lijst(nieuw, true);
-            if let Some(m) = melding {
-                zeg(&m, if handmatig { Belang::Belangrijk } else { Belang::Gewoon });
+                });
             }
-            if hoofdscherm::focus_hier() && unsafe { windows::Win32::UI::Input::KeyboardAndMouse::GetFocus() } == hoofdscherm::onderdelen().tab {
-                // De focus niet verplaatsen; de lijst staat klaar met Tab.
+            if !erbij.is_empty() {
+                delen.push(nieuws_tekst(&nieuw, &erbij));
+            }
+            toon_lijst(nieuw, true);
+            // Een korte melding; de focus blijft waar hij is.
+            if !delen.is_empty() {
+                zeg(&delen.join(" "), if handmatig { Belang::Belangrijk } else { Belang::Gewoon });
             }
             if eerste_keer {
                 if met(|s| s.opties.meet.is_some()).unwrap_or(false) {
@@ -96,6 +97,21 @@ pub fn lijst_klaar(uitkomst: Uitkomst<Vec<Bestand>>, handmatig: bool) {
 }
 
 /// Enter of de knop Downloaden.
+/// "Nieuw sinds de vorige keer: X in de map Y." Bij veel nieuwe bestanden alleen het aantal.
+fn nieuws_tekst(lijst: &[Bestand], nieuw: &[usize]) -> String {
+    if nieuw.len() > 3 {
+        return f("NieuwVeel", &[&nieuw.len().to_string()]);
+    }
+    let namen: Vec<String> = nieuw
+        .iter()
+        .map(|&i| {
+            let b = &lijst[i];
+            if b.map.is_empty() { b.naam.clone() } else { f("NieuwInMap", &[&b.naam, &b.map.replace('/', " > ")]) }
+        })
+        .collect();
+    f("NieuwSinds", &[&namen.join(", ")])
+}
+
 /// Enter of dubbelklik in de lijst: een map openen (zoals in de Verkenner), een bestand downloaden.
 pub fn enter_in_lijst() {
     if let Some(super::verkenner::Regel::Map { pad, .. }) = super::verkenner::keuze() {

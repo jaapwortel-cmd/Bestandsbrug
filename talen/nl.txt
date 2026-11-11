@@ -57,8 +57,6 @@ LijstLaden = De lijst wordt opgehaald.
 LijstGeladen = De lijst is opgehaald. Er staan {0} bestanden in.
 LijstEenBestand = De lijst is opgehaald. Er staat 1 bestand in.
 LijstLeeg = Er staan nu geen bestanden in de lijst.
-LijstNieuw = De lijst is bijgewerkt. Nieuw: {0}.
-LijstAnders = De lijst is bijgewerkt.
 LijstOud = Dit is de lijst van de vorige keer. De nieuwe lijst wordt opgehaald.
 
 # Fouten in gewone taal
@@ -208,3 +206,7 @@ UploadMapKiezenTitel = Kies de map die je naar Jaap wilt sturen
 GekozenMap = Map: {0}
 GekozenMapMelding = Gekozen: de map {0}. Kies nu Uploaden.
 MeldUploadMapKlaar = Klaar, bedankt! De map {0} is naar Jaap gestuurd, met {1} bestanden.
+SoortNieuw = {0}, nieuw
+NieuwSinds = Nieuw sinds de vorige keer: {0}.
+NieuwInMap = {0} in de map {1}
+NieuwVeel = Er zijn {0} nieuwe bestanden sinds de vorige keer. In de lijst staat er nieuw bij.
