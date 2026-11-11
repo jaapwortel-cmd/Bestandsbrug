@@ -2,6 +2,7 @@
 //! schermlezer alles kent (namen, rollen, toestanden). Hier: opstarten, de berichtenlus met de sneltoetsen,
 //! en de gedeelde toestand van het scherm.
 
+mod boom;
 mod dialogen;
 mod hoofdscherm;
 mod menu;

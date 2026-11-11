@@ -116,8 +116,11 @@ begin
     WizardForm.PageNameLabel.Caption := CustomMessage('PrivacyKop');
     WizardForm.PageDescriptionLabel.Caption := CustomMessage('PrivacyUitleg');
     WizardForm.InfoBeforeClickLabel.Caption := '';
-    WizardForm.ActiveControl := WizardForm.InfoBeforeMemo;
+    if WizardForm.InfoBeforeMemo.Visible and WizardForm.InfoBeforeMemo.Enabled then
+      WizardForm.ActiveControl := WizardForm.InfoBeforeMemo;
   end
-  else
+  // Alleen als de knop er echt staat (tijdens het installeren is hij verborgen of uitgeschakeld;
+  // dan gaf Windows de fout "Cannot focus a disabled or invisible window").
+  else if WizardForm.NextButton.Visible and WizardForm.NextButton.Enabled then
     WizardForm.ActiveControl := WizardForm.NextButton;
 end;

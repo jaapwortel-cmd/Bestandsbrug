@@ -6,41 +6,25 @@ use bestandsbrug::fout::Uitkomst;
 use bestandsbrug::overdracht;
 use bestandsbrug::pcloud::lijst::{self, Bestand};
 use bestandsbrug::taal::{f, t};
-use bestandsbrug::{log, opmaak};
-use windows::Win32::UI::Controls::*;
+use bestandsbrug::log;
 use windows::Win32::UI::WindowsAndMessaging::SetTimer;
 
 use super::overdracht_ui::{self, Taak};
-use super::win::{self, snd};
+use super::win;
 use super::*;
 
-/// Zet de bestanden in de lijst op het scherm. De keuze blijft op hetzelfde bestand staan.
+/// Zet de bestanden op het scherm, als boom met mappen. De keuze en open mappen blijven staan.
 pub fn vul_lijst(lijst: &[Bestand]) {
-    let o = hoofdscherm::onderdelen();
-    let gekozen = gekozen_index().and_then(|i| met(|s| s.lijst.get(i).map(|b| b.fileid)).flatten());
-    snd(o.lijst, LVM_DELETEALLITEMS, 0, 0);
-    for (i, b) in lijst.iter().enumerate() {
-        let naam = win::ws(&b.naam);
-        let item = LVITEMW { mask: LVIF_TEXT | LVIF_PARAM, iItem: i as i32, pszText: windows::core::PWSTR(naam.as_ptr() as *mut u16), lParam: windows::Win32::Foundation::LPARAM(i as isize), ..Default::default() };
-        snd(o.lijst, LVM_INSERTITEMW, 0, &item as *const _ as isize);
-        for (kol, tekst) in [(1, b.map.clone()), (2, opmaak::grootte(b.grootte)), (3, opmaak::datum(&b.gewijzigd)), (4, b.uitleg.clone())] {
-            let v = win::ws(&tekst);
-            let sub = LVITEMW { iSubItem: kol, pszText: windows::core::PWSTR(v.as_ptr() as *mut u16), ..Default::default() };
-            snd(o.lijst, LVM_SETITEMTEXTW, i, &sub as *const _ as isize);
-        }
-    }
-    let kies = gekozen.and_then(|id| lijst.iter().position(|b| b.fileid == id)).unwrap_or(0);
-    if !lijst.is_empty() {
-        let staat = LVITEMW { stateMask: LIST_VIEW_ITEM_STATE_FLAGS(LVIS_SELECTED.0 | LVIS_FOCUSED.0), state: LIST_VIEW_ITEM_STATE_FLAGS(LVIS_SELECTED.0 | LVIS_FOCUSED.0), ..Default::default() };
-        snd(o.lijst, LVM_SETITEMSTATE, kies, &staat as *const _ as isize);
-        snd(o.lijst, LVM_ENSUREVISIBLE, kies, 0);
-    }
+    let oud = met(|s| s.lijst.clone()).unwrap_or_default();
+    super::boom::vul(lijst, &oud);
 }
 
+/// Het gekozen bestand (geen map).
 pub fn gekozen_index() -> Option<usize> {
-    let o = hoofdscherm::onderdelen();
-    let i = snd(o.lijst, LVM_GETNEXTITEM, usize::MAX, LVNI_SELECTED as isize);
-    (i >= 0).then_some(i as usize)
+    match super::boom::keuze() {
+        Some(super::boom::Keuze::Bestand(i)) => Some(i),
+        _ => None,
+    }
 }
 
 /// Bewaar en toon een lijst.
@@ -123,6 +107,10 @@ pub fn lijst_klaar(uitkomst: Uitkomst<Vec<Bestand>>, handmatig: bool) {
 pub fn start_download() {
     if overdracht_ui::bezig() {
         zeg(&t("AlBezig"), Belang::Belangrijk);
+        return;
+    }
+    if matches!(super::boom::keuze(), Some(super::boom::Keuze::Map(_))) {
+        zeg(&t("KiesBestandInMap"), Belang::Belangrijk);
         return;
     }
     let bestand = gekozen_index().and_then(|i| met(|s| s.lijst.get(i).cloned()).flatten());

@@ -32,7 +32,7 @@ MenuOver = &About {naam}
 # Tabs and buttons
 TabDownloaden = Download
 TabUploaden = Upload
-LijstNaam = Files you can download
+LijstNaam = Folders and files you can download
 KolomNaam = Name
 KolomGrootte = Size
 KolomDatum = Date
@@ -185,3 +185,4 @@ UpdateBinnen = The new version has been downloaded and checked.
 EscUpdateUitleg = An update cannot continue later. You can continue or cancel everything.
 KolomMap = App
 TabsNaam = Download or upload
+KiesBestandInMap = This is a folder. Open it with the right arrow or Enter, and choose a file.

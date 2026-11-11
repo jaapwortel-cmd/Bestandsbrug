@@ -2,7 +2,6 @@
 //! duidelijke focusrand, tabbladen als "pillen", de voortgangsbalk en de kolomkoppen van de lijst.
 //! Alleen tekenen: namen, rollen en toestanden voor de schermlezer blijven die van Windows zelf.
 
-use bestandsbrug::taal::zonder_amp;
 use windows::Win32::Foundation::*;
 use windows::Win32::Graphics::Gdi::*;
 use windows::Win32::UI::Controls::*;
@@ -209,41 +208,4 @@ fn teken_tabs(h: HWND) {
         }
         let _ = EndPaint(h, &ps);
     }
-}
-
-/// De kolomkoppen van de lijst in de kleuren van de weergave.
-pub fn kop_van_lijst(lijst: HWND) {
-    unsafe {
-        let _ = SetWindowSubclass(lijst, Some(lijst_proc), 2, 0);
-    }
-}
-
-extern "system" fn lijst_proc(h: HWND, msg: u32, wp: WPARAM, lp: LPARAM, _id: usize, _ref: usize) -> LRESULT {
-    if msg == WM_NOTIFY {
-        let kop = unsafe { &*(lp.0 as *const NMHDR) };
-        if kop.code == NM_CUSTOMDRAW {
-            let kopje = HWND(win::snd(h, LVM_GETHEADER, 0, 0) as *mut _);
-            if kop.hwndFrom == kopje {
-                let cd = unsafe { &*(lp.0 as *const NMCUSTOMDRAW) };
-                let th = thema::huidig();
-                if cd.dwDrawStage == CDDS_PREPAINT {
-                    return LRESULT(CDRF_NOTIFYITEMDRAW as isize);
-                }
-                if cd.dwDrawStage == CDDS_ITEMPREPAINT {
-                    let r = cd.rc;
-                    vul(cd.hdc, &r, th.k.achtergrond);
-                    let lijn = RECT { top: r.bottom - 2, ..r };
-                    vul(cd.hdc, &lijn, th.k.rand);
-                    let mut buf = [0u16; 128];
-                    let mut item = HDITEMW { mask: HDI_TEXT, pszText: windows::core::PWSTR(buf.as_mut_ptr()), cchTextMax: 128, ..Default::default() };
-                    win::snd(kopje, HDM_GETITEMW, cd.dwItemSpec, &mut item as *mut _ as isize);
-                    let naam = String::from_utf16_lossy(&buf[..buf.iter().position(|&c| c == 0).unwrap_or(0)]);
-                    let tr = RECT { left: r.left + th.regel / 3, ..r };
-                    tekst(cd.hdc, &zonder_amp(&naam), &tr, th.k.tekst, th.letter_vet, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-                    return LRESULT(CDRF_SKIPDEFAULT as isize);
-                }
-            }
-        }
-    }
-    unsafe { DefSubclassProc(h, msg, wp, lp) }
 }

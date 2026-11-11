@@ -1,6 +1,12 @@
 WIJZIGINGEN / CHANGES - Bestandsbrug (Filebridge)
 Per versie een regel "nl:" (Nederlands) en "en:" (English). Mag vaker. bouw-alles.ps1 zet deze regels in versie.txt.
 
+Versie 1.0.1 (12 november 2026)
+nl: De apps staan nu in mappen. Open een map met de pijl naar rechts of Enter; de bestanden staan eronder.
+nl: Een foutmelding tijdens het installeren is opgelost.
+en: The apps are now in folders. Open a folder with the right arrow or Enter; the files are below it.
+en: An error message during installation has been fixed.
+
 Versie 1.0.0 (11 november 2026)
 nl: Eerste versie. Apps van Jaap downloaden en bestanden naar Jaap sturen, via pCloud.
 nl: Voortgang elke 6 seconden, lichte en donkere weergave, Nederlands en Engels.

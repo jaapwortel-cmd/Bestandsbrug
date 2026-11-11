@@ -16,12 +16,20 @@ fn lijst_lezen_met_app_mappen() {
             {"name":"Diep","folderid":4,"isfolder":true,"contents":[{"name":"x.dll","fileid":8,"size":1,"isfolder":false}]}]},
         {"name":"A.exe","fileid":1,"size":20,"modified":"Wed, 11 Nov 2026 17:42:23 +0000","hash":9223372036854775808,"isfolder":false}]}}"#).unwrap();
     let l = lijst::lees_inhoud(&json);
-    assert_eq!(l.len(), 3, "hoofdmap en app-map, niet dieper");
+    assert_eq!(l.len(), 4, "alle bestanden, ook in diepe mappen");
     assert_eq!(l[0].naam, "A.exe");
     assert_eq!(l[2].map, "Paper Pilot");
-    assert!(!l.iter().any(|b| b.naam == "x.dll"));
+    assert_eq!(l[3].map, "Paper Pilot/Diep");
+    // De boom: eerst de mappen, dan de bestanden.
+    let boom = lijst::maak_boom(&l);
+    assert_eq!(boom.mappen.len(), 1);
+    assert_eq!(boom.bestanden.iter().map(|&i| l[i].naam.as_str()).collect::<Vec<_>>(), vec!["A.exe", "b.exe"]);
+    let pp = &boom.mappen[0];
+    assert_eq!((pp.naam.as_str(), pp.pad.as_str()), ("Paper Pilot", "Paper Pilot"));
+    assert_eq!(pp.mappen[0].pad, "Paper Pilot/Diep");
+    assert_eq!(l[pp.mappen[0].bestanden[0]].naam, "x.dll");
     assert_eq!(l[0].hash, 9223372036854775808);
-    assert_eq!(lijst::nieuwe_namen(&l[..2], &l), vec!["Paper Pilot 0.0.0.16 installatie.exe".to_string()]);
+    assert_eq!(lijst::nieuwe_namen(&l[..2], &l), vec!["Paper Pilot 0.0.0.16 installatie.exe".to_string(), "x.dll".to_string()]);
 }
 
 #[test]

@@ -1,4 +1,4 @@
-//! Het hoofdscherm: de onderdelen maken (tabbladen, lijst, knoppen, voortgang, melding), de teksten in de
+//! Het hoofdscherm: de onderdelen maken (tabbladen, boom met mappen en bestanden, knoppen, voortgang, melding), de teksten in de
 //! gekozen taal, de indeling op het scherm, en wisselen van tabblad, taal en weergave.
 //! Volgorde op het scherm = volgorde met Tab = volgorde voor de schermlezer.
 
@@ -88,8 +88,8 @@ pub fn maak_onderdelen(h: HWND) {
         tab: m("SysTabControl32", WS_TABSTOP.0 | TCS_FOCUSONBUTTONDOWN as u32 | TCS_FIXEDWIDTH as u32 | WS_CLIPSIBLINGS.0, 0, ID_TAB),
         lijst_label: m("STATIC", LABEL, 0, ID_LIJST_LABEL),
         lijst: m(
-            "SysListView32",
-            WS_TABSTOP.0 | LVS_REPORT as u32 | LVS_SINGLESEL as u32 | LVS_SHOWSELALWAYS as u32,
+            "SysTreeView32",
+            WS_TABSTOP.0 | TVS_HASBUTTONS | TVS_LINESATROOT | TVS_SHOWSELALWAYS | TVS_FULLROWSELECT,
             0,
             ID_LIJST,
         ),
@@ -107,15 +107,8 @@ pub fn maak_onderdelen(h: HWND) {
         melding: m("EDIT", LEESVAK, 0, ID_MELDING),
     };
     ONDERDELEN.with(|c| c.set(o));
-    // Lijst: hele regel kiezen, met kolomkoppen.
-    snd(o.lijst, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_LABELTIP) as isize);
-    for i in 0..5 {
-        let mut kol = LVCOLUMNW { mask: LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM, cx: 100, iSubItem: i, ..Default::default() };
-        let leeg = win::ws("");
-        kol.pszText = windows::core::PWSTR(leeg.as_ptr() as *mut u16);
-        snd(o.lijst, LVM_INSERTCOLUMNW, i as usize, &kol as *const _ as isize);
-    }
-    tekenen::kop_van_lijst(o.lijst);
+    // Boom met mappen: zonder flikkeren tekenen.
+    snd(o.lijst, TVM_SETEXTENDEDSTYLE, TVS_EX_DOUBLEBUFFER as usize, TVS_EX_DOUBLEBUFFER as isize);
     tekenen::tabbladen(o.tab);
     super::spraak::zet_balk_toegankelijk(o.balk, "");
     for v in [o.upload_uitleg, o.melding] {
@@ -142,11 +135,6 @@ pub fn zet_teksten() {
     let p = met(|s| s.pagina).unwrap_or(0);
     snd(o.tab, TCM_SETCURSEL, p, 0);
     win::zet_tekst(o.lijst_label, &t("LijstNaam"));
-    for (i, k) in ["KolomNaam", "KolomMap", "KolomGrootte", "KolomDatum", "KolomUitleg"].iter().enumerate() {
-        let tekst = win::ws(&t(k));
-        let kol = LVCOLUMNW { mask: LVCF_TEXT, pszText: windows::core::PWSTR(tekst.as_ptr() as *mut u16), ..Default::default() };
-        snd(o.lijst, LVM_SETCOLUMNW, i, &kol as *const _ as isize);
-    }
     win::zet_tekst(o.knop_download, &t("KnopDownloaden"));
     win::zet_tekst(o.knop_vernieuwen, &t("KnopVernieuwen"));
     win::zet_tekst(o.upload_uitleg_label, &t("UploadUitlegNaam"));
@@ -184,18 +172,11 @@ pub fn pas_thema_toe() {
     for h in [o.lijst, o.upload_uitleg, o.melding, o.gekozen] {
         thema::stijl_onderdeel(h, donker);
     }
-    snd(o.lijst, LVM_SETBKCOLOR, 0, th.k.kaart.0 as isize);
-    snd(o.lijst, LVM_SETTEXTBKCOLOR, 0, th.k.kaart.0 as isize);
-    snd(o.lijst, LVM_SETTEXTCOLOR, 0, th.k.tekst.0 as isize);
-    // Ruimere regels in de lijst: een onzichtbaar plaatje van 1 punt breed bepaalt de regelhoogte.
-    unsafe {
-        let hoogte = th.regel + th.regel / 2;
-        let lijstje = ImageList_Create(1, hoogte, ILC_COLOR32, 1, 0);
-        let oud = snd(o.lijst, LVM_SETIMAGELIST, LVSIL_SMALL as usize, lijstje.0 as isize);
-        if oud != 0 {
-            let _ = ImageList_Destroy(Some(HIMAGELIST(oud)));
-        }
-    }
+    // De boom in de kleuren van de weergave, met ruime regels.
+    snd(o.lijst, TVM_SETBKCOLOR, 0, th.k.kaart.0 as isize);
+    snd(o.lijst, TVM_SETTEXTCOLOR, 0, th.k.tekst.0 as isize);
+    snd(o.lijst, TVM_SETLINECOLOR, 0, th.k.rand.0 as isize);
+    snd(o.lijst, TVM_SETITEMHEIGHT, (th.regel + th.regel / 2) as usize, 0);
     let h = hwnd();
     thema::titelbalk(h, donker);
     unsafe {
@@ -275,10 +256,6 @@ pub fn indeling() {
     let b1 = knop_b(o.knop_download);
     win::verplaats(o.knop_download, x, knop_y, b1, knop_h);
     win::verplaats(o.knop_vernieuwen, x + b1 + m, knop_y, knop_b(o.knop_vernieuwen), knop_h);
-    let lb = b - regel;
-    for (i, deel) in [38, 17, 11, 20, 14].iter().enumerate() {
-        snd(o.lijst, LVM_SETCOLUMNWIDTH, i, (lb * deel / 100) as isize);
-    }
 
     // Pagina Uploaden.
     let mut y = p.top + m;
@@ -336,17 +313,20 @@ pub fn kies_pagina(n: usize, focus: bool) {
 pub fn focus_start() {
     let o = onderdelen();
     let p = met(|s| s.pagina).unwrap_or(0);
-    let doel = if p == 0 && snd(o.lijst, LVM_GETITEMCOUNT, 0, 0) > 0 { o.lijst } else { o.tab };
+    let doel = if p == 0 && super::boom::aantal() > 0 { o.lijst } else { o.tab };
     unsafe {
         let _ = SetFocus(Some(doel));
     }
 }
 
-/// Enter: in de lijst = downloaden; op een knop = die knop.
+/// Enter: in de boom op een bestand = downloaden, op een map = open of dicht; op een knop = die knop.
 pub fn enter(focus: HWND) -> bool {
     let o = onderdelen();
     if focus == o.lijst {
-        super::scherm_download::start_download();
+        match super::boom::keuze() {
+            Some(super::boom::Keuze::Map(_)) => super::boom::wissel_open(),
+            _ => super::scherm_download::start_download(),
+        }
         return true;
     }
     if o.knoppen().contains(&focus) {
@@ -390,9 +370,10 @@ pub fn melding_van_onderdeel(kop: &NMHDR, lp: LPARAM) -> Option<LRESULT> {
         kies_pagina(n, false);
         return Some(LRESULT(0));
     }
-    if kop.hwndFrom == o.lijst && kop.code == NM_DBLCLK {
+    // Dubbelklik op een bestand = downloaden. Op een map gaat die vanzelf open of dicht.
+    if kop.hwndFrom == o.lijst && kop.code == NM_DBLCLK && matches!(super::boom::keuze(), Some(super::boom::Keuze::Bestand(_))) {
         super::scherm_download::start_download();
-        return Some(LRESULT(0));
+        return Some(LRESULT(1));
     }
     let _ = lp;
     None

@@ -24,7 +24,7 @@ src/lib.rs                de kern (werkt ook op Linux, voor de tests)
   log.rs                  logbestand (Engels, kort, max 500 KB)
   melding.rs              voortgangstekst en de timer van 6 seconden
   overdracht.rs           voortgang/stop (gedeeld met de achtergrond) en onderbroken downloads (overdrachten.json)
-  pcloud/                 mod.rs (API, servers, foutcodes), lijst.rs (hoofdmap + app-mappen 1 laag diep), download.rs (Range/hervatten), upload.rs
+  pcloud/                 mod.rs (API, servers, foutcodes), lijst.rs (alle mappen, maak_boom), download.rs (Range/hervatten), upload.rs
   update.rs               versie.txt lezen, Dropbox (los of hele map als zip), SHA-256
   net.rs                  gedeelde internetverbinding (ureq 3), tijdslimieten, foutvertaling
   fout.rs, opmaak.rs, tijd.rs, paden.rs, voorkeuren.rs, html.rs (maakt Bestandsbrug.html)
@@ -34,6 +34,7 @@ src/scherm/               het Windows-scherm (alleen Windows)
   venster.rs              hoofdvenster en alle berichten (WM_*), menukeuzes -> opdracht()
   hoofdscherm.rs          onderdelen maken, teksten, indeling, tabbladen, taal en weergave wisselen
   menu.rs                 menubalk; radio-vinkjes bij Taal en Toegankelijkheid
+  boom.rs                 de boom (TreeView) met mappen en bestanden; keuze, open/dicht, open mappen bewaren
   scherm_download.rs      lijst tonen/vernieuwen, downloaden, onderbroken download bij de start
   scherm_upload.rs        bestand kiezen en uploaden
   overdracht_ui.rs        lopende overdracht: balk, melding elke 6 s, Escape-vraag, afsluiten
@@ -117,4 +118,7 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
 - 1.0.0 (11 nov 2026): eerste versie, alles uit de opdracht. Nog door Jaap te testen met JAWS.
 - Bouwronde (11 nov): alles groen. FlaUI-controle: namen en Tab-volgorde goed; de menu-controle van het script
   is gemaakt voor WinForms-menu's en vindt gewone Win32-menu's niet (met F10/Alt werken ze wel; gecontroleerd met Wine).
-- Jaap zette op 11 nov de apps in submappen; de lijst toont daarom hoofdmap + app-mappen (kolom App).
+- Jaap zette op 11 nov de apps in submappen. 1.0.1 (12 nov, Jaaps wens): mappen zichtbaar als boom met de bestanden
+  eronder (Windows: TreeView; HTML: details/summary), alle diepten. Installatiefout "Cannot focus a disabled or
+  invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
+- Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).

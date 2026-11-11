@@ -4,7 +4,7 @@ UITLEG OVER {naam}
 Met {naam} kun je de apps van Jaap downloaden. Je kunt ook een bestand naar Jaap sturen (uploaden). Alles gaat via pCloud. Je hoeft je niet aan te melden.
 
 2. Een app downloaden
-Ga naar het tabblad Downloaden. Loop met de pijltjes door de lijst. Druk op Enter of kies de knop Downloaden. Kies waar je het bestand wilt opslaan. Standaard is dat de map Downloads.
+Ga naar het tabblad Downloaden. Daar staan mappen, één per app. Loop met de pijltjes omhoog en omlaag. Open een map met de pijl naar rechts of met Enter. Sluit hem met de pijl naar links. De bestanden staan onder de map. Kies een bestand en druk op Enter, of kies de knop Downloaden. Kies waar je het bestand wilt opslaan. Standaard is dat de map Downloads.
 Met F5 haal je de lijst opnieuw op. Staat er een nieuwe app in de lijst, dan hoor je dat.
 
 3. Een bestand naar Jaap sturen

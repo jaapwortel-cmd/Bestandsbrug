@@ -32,7 +32,7 @@ MenuOver = &Over {naam}
 # Tabbladen en knoppen
 TabDownloaden = Downloaden
 TabUploaden = Uploaden
-LijstNaam = Bestanden die je kunt downloaden
+LijstNaam = Mappen en bestanden die je kunt downloaden
 KolomNaam = Naam
 KolomGrootte = Grootte
 KolomDatum = Datum
@@ -185,3 +185,4 @@ UpdateBinnen = De nieuwe versie is gedownload en gecontroleerd.
 EscUpdateUitleg = Een update kan niet later verdergaan. Je kunt doorgaan of alles annuleren.
 KolomMap = App
 TabsNaam = Downloaden of uploaden
+KiesBestandInMap = Dit is een map. Open de map met de pijl naar rechts of Enter, en kies een bestand.

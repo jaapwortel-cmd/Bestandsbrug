@@ -18,15 +18,15 @@ pub struct Bestand {
     /// Datum zoals pCloud hem geeft (UTC).
     pub gewijzigd: String,
     pub hash: u64,
-    /// De app-map waar het bestand in staat (leeg = de hoofdmap).
+    /// De map waar het bestand in staat, met "/" tussen de mappen (leeg = de hoofdmap).
     #[serde(default)]
     pub map: String,
     #[serde(default)]
     pub uitleg: String,
 }
 
-/// Haalt de lijst op: de bestanden in de hoofdmap en in elke app-map daaronder (één laag diep), gesorteerd
-/// op map en naam. Diepere mappen tellen niet mee. uitleg.txt zelf staat niet in de lijst.
+/// Haalt de lijst op: alle bestanden in de openbare map en alle mappen daaronder, gesorteerd op map en naam.
+/// Op het scherm komen ze als een boom (maak_boom). uitleg.txt zelf staat niet in de lijst.
 pub fn haal_lijst() -> Uitkomst<Vec<Bestand>> {
     let json = super::api_get(
         "showpublink",
@@ -50,24 +50,23 @@ pub fn haal_lijst() -> Uitkomst<Vec<Bestand>> {
     Ok(lijst)
 }
 
-/// Leest de bestanden uit het antwoord van showpublink (hoofdmap en de app-mappen één laag diep).
+/// Leest de bestanden uit het antwoord van showpublink (alle mappen, ook diep).
 pub fn lees_inhoud(json: &Value) -> Vec<Bestand> {
     let mut lijst = Vec::new();
     if let Some(m) = json.get("metadata") {
-        verzamel(m, "", 0, &mut lijst);
+        verzamel(m, "", &mut lijst);
     }
     lijst.sort_by_key(|b| (b.map.to_lowercase(), b.naam.to_lowercase()));
     lijst
 }
 
-fn verzamel(map: &Value, mapnaam: &str, diepte: u32, lijst: &mut Vec<Bestand>) {
+fn verzamel(map: &Value, mapnaam: &str, lijst: &mut Vec<Bestand>) {
     let Some(inhoud) = map.get("contents").and_then(Value::as_array) else { return };
     for x in inhoud {
         let naam = x.get("name").and_then(Value::as_str).unwrap_or("");
         if x.get("isfolder").and_then(Value::as_bool).unwrap_or(false) {
-            if diepte == 0 {
-                verzamel(x, naam, 1, lijst);
-            }
+            let pad = if mapnaam.is_empty() { naam.to_string() } else { format!("{mapnaam}/{naam}") };
+            verzamel(x, &pad, lijst);
             continue;
         }
         let Some(fileid) = x.get("fileid").and_then(Value::as_u64) else { continue };
@@ -122,6 +121,48 @@ pub fn laad_cache() -> Option<Vec<Bestand>> {
 pub fn bewaar_cache(lijst: &[Bestand]) {
     if let Ok(s) = serde_json::to_string(lijst) {
         let _ = crate::voorkeuren::schrijf_veilig(&crate::paden::bestand(CACHE), s.as_bytes());
+    }
+}
+
+/// Een map in de boom: de mappen erin en de bestanden erin (als nummer in de lijst).
+#[derive(Debug, Default, Clone, PartialEq)]
+pub struct Map {
+    pub naam: String,
+    /// Het hele pad, met "/" (leeg = de hoofdmap).
+    pub pad: String,
+    pub mappen: Vec<Map>,
+    pub bestanden: Vec<usize>,
+}
+
+/// Maakt van de lijst een boom: in elke map eerst de mappen, dan de bestanden, allebei op naam.
+pub fn maak_boom(lijst: &[Bestand]) -> Map {
+    let mut wortel = Map::default();
+    for (i, b) in lijst.iter().enumerate() {
+        let mut m = &mut wortel;
+        if !b.map.is_empty() {
+            for deel in b.map.split('/') {
+                let pad = if m.pad.is_empty() { deel.to_string() } else { format!("{}/{deel}", m.pad) };
+                let plek = match m.mappen.iter().position(|x| x.naam == deel) {
+                    Some(p) => p,
+                    None => {
+                        m.mappen.push(Map { naam: deel.to_string(), pad, ..Default::default() });
+                        m.mappen.len() - 1
+                    }
+                };
+                m = &mut m.mappen[plek];
+            }
+        }
+        m.bestanden.push(i);
+    }
+    sorteer(&mut wortel, lijst);
+    wortel
+}
+
+fn sorteer(m: &mut Map, lijst: &[Bestand]) {
+    m.mappen.sort_by_key(|x| x.naam.to_lowercase());
+    m.bestanden.sort_by_key(|&i| lijst[i].naam.to_lowercase());
+    for x in m.mappen.iter_mut() {
+        sorteer(x, lijst);
     }
 }
 
