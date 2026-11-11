@@ -109,6 +109,7 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
 
 - Alleen de twee openbare pCloud-codes en de ALLEEN-LEZEN Dropbox-link. Nooit een wachtwoord, token, API-sleutel
   of de Dropbox-link met schrijfrechten (die heeft Jaap; niet om vragen).
+- Geen licentie (Jaaps keuze, 11 nov 2026): voeg er geen toe en vraag er niet meer naar.
 - Voor elke push: zoeken naar "token", "secret", "password", "rlkey", e-mailadressen (zie het eindrapport).
 
 ## Stand van zaken
