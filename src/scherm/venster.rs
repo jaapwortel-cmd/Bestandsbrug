@@ -241,6 +241,7 @@ pub fn opdracht(id: u16) {
     match id {
         hs::ID_KNOP_DOWNLOAD | m::ID_DOWNLOADEN => scherm_download::start_download(),
         hs::ID_KNOP_VERNIEUWEN | m::ID_VERNIEUWEN => scherm_download::vernieuw(true),
+        hs::ID_KNOP_OMHOOG => verkenner::omhoog(),
         hs::ID_KNOP_KIEZEN | m::ID_UPLOAD_KIEZEN => {
             hoofdscherm::kies_pagina(1, false);
             scherm_upload::kies_bestand();

@@ -34,7 +34,7 @@ src/scherm/               het Windows-scherm (alleen Windows)
   venster.rs              hoofdvenster en alle berichten (WM_*), menukeuzes -> opdracht()
   hoofdscherm.rs          onderdelen maken, teksten, indeling, tabbladen, taal en weergave wisselen
   menu.rs                 menubalk; radio-vinkjes bij Taal en Toegankelijkheid
-  boom.rs                 de boom (TreeView) met mappen en bestanden; keuze, open/dicht, open mappen bewaren
+  verkenner.rs            de lijst zoals de Verkenner: één map tegelijk; Enter = map openen, Backspace = omhoog
   scherm_download.rs      lijst tonen/vernieuwen, downloaden, onderbroken download bij de start
   scherm_upload.rs        bestand kiezen en uploaden
   overdracht_ui.rs        lopende overdracht: balk, melding elke 6 s, Escape-vraag, afsluiten
@@ -118,7 +118,8 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
 - 1.0.0 (11 nov 2026): eerste versie, alles uit de opdracht. Nog door Jaap te testen met JAWS.
 - Bouwronde (11 nov): alles groen. FlaUI-controle: namen en Tab-volgorde goed; de menu-controle van het script
   is gemaakt voor WinForms-menu's en vindt gewone Win32-menu's niet (met F10/Alt werken ze wel; gecontroleerd met Wine).
-- Jaap zette op 11 nov de apps in submappen. 1.0.1 (12 nov, Jaaps wens): mappen zichtbaar als boom met de bestanden
-  eronder (Windows: TreeView; HTML: details/summary), alle diepten. Installatiefout "Cannot focus a disabled or
+- Jaap zette op 11 nov de apps in submappen. 1.0.1 (12 nov, Jaaps wens): GEEN boom (dat wilde hij niet), maar zoals de
+  Verkenner: de lijst toont één map (eerst mappen, dan bestanden; kolommen Naam, Soort, Grootte, Datum, Uitleg),
+  Enter opent een map, Backspace of de knop "Map omhoog" gaat terug (met de vorige map gekozen). HTML net zo. Installatiefout "Cannot focus a disabled or
   invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
 - Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).

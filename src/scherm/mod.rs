@@ -2,7 +2,7 @@
 //! schermlezer alles kent (namen, rollen, toestanden). Hier: opstarten, de berichtenlus met de sneltoetsen,
 //! en de gedeelde toestand van het scherm.
 
-mod boom;
+mod verkenner;
 mod dialogen;
 mod hoofdscherm;
 mod menu;
@@ -348,6 +348,10 @@ fn voor_toets(msg: &MSG) -> bool {
             true
         }
         VK_RETURN if !ctrl => hoofdscherm::enter(focus),
+        VK_BACK if focus == hoofdscherm::onderdelen().lijst => {
+            verkenner::omhoog();
+            true
+        }
         _ => false,
     }
 }

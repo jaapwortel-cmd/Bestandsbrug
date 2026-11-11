@@ -4,7 +4,7 @@ INSTRUCTIONS FOR {naam}
 With {naam} you can download Jaap's apps. You can also send a file to Jaap (upload). Everything goes through pCloud. You do not need to sign in.
 
 2. Download an app
-Go to the Download tab. There you find folders, one for each app. Use the up and down arrows to move. Open a folder with the right arrow or with Enter. Close it with the left arrow. The files are below the folder. Choose a file and press Enter, or choose the Download button. Choose where you want to save the file. By default this is the Downloads folder.
+Go to the Download tab. It works like File Explorer in Windows. First you see the folders, one for each app. Use the up and down arrows to move. Press Enter to open a folder. The files are inside. Press Backspace (or the Up one folder button) to go back to the folder above. Choose a file and press Enter, or choose the Download button. Choose where you want to save the file. By default this is the Downloads folder.
 Press F5 to get the list again. If there is a new app in the list, you will hear it.
 
 3. Send a file to Jaap
@@ -22,7 +22,8 @@ An upload cannot continue later. There you only have Continue and Cancel everyth
 
 6. Shortcut keys
 - Ctrl+Tab: go to the other tab. Ctrl+1: Download. Ctrl+2: Upload.
-- Enter: download the chosen file.
+- Enter: open the chosen folder, or download the chosen file.
+- Backspace: go back to the folder above.
 - F5: refresh the list.
 - F1: these instructions.
 - Alt+F4: quit {naam}.

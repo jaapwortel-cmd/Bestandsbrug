@@ -29,14 +29,14 @@ main { max-width: 64rem; margin: 0 auto; padding: 1rem; display: grid; gap: 1rem
 [role="tablist"] { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.8rem; }
 [role="tab"] { font: inherit; font-weight: 600; border-radius: 999px; padding: 0.45rem 1.4rem; border: 2px solid var(--rand); background: var(--kaart); color: var(--tekst); cursor: pointer; }
 [role="tab"][aria-selected="true"] { background: var(--accent); color: var(--op-accent); border-color: var(--accent); }
-#lijstnaam { font-size: 1rem; color: var(--zacht); }
-#bestanden details { margin: 0.2rem 0; }
-#bestanden summary { cursor: pointer; font-weight: 600; padding: 0.35rem 0.5rem; border-radius: 0.5rem; }
-#bestanden summary:hover { background: var(--achtergrond); }
-#bestanden .inhoud { margin-left: 1.4rem; padding-left: 0.6rem; border-left: 2px solid var(--rand); }
-#bestanden ul { list-style: none; margin: 0; padding: 0; }
-#bestanden li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--rand); }
-#bestanden li .gegevens { color: var(--zacht); }
+table { width: 100%; border-collapse: collapse; }
+caption { text-align: left; font-weight: 600; color: var(--zacht); padding-bottom: 0.4rem; }
+th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--rand); vertical-align: middle; }
+thead th { font-weight: 700; background: var(--achtergrond); }
+td.getal { white-space: nowrap; }
+.naamknop { font: inherit; font-weight: 600; color: var(--tekst); background: transparent; border: 2px solid transparent; border-radius: 0.5rem; padding: 0.3rem 0.5rem; cursor: pointer; text-align: left; width: 100%; }
+.naamknop:hover { background: var(--achtergrond); }
+.naamknop.map::before { content: "\1F4C1  "; }
 .knop { font: inherit; font-weight: 600; border-radius: 999px; padding: 0.5rem 1.4rem; border: 2px solid var(--rand); background: var(--kaart); color: var(--tekst); cursor: pointer; }
 .knop.hoofd { background: var(--accent); color: var(--op-accent); border-color: var(--accent); }
 .knop:active { background: var(--achtergrond); }
@@ -107,10 +107,13 @@ dialog::backdrop { background: rgba(0,0,0,.5); }
       <button role="tab" id="tab-up" aria-selected="false" aria-controls="paneel-up" tabindex="-1" data-tekst="TabUploaden"></button>
     </div>
     <div role="tabpanel" id="paneel-down" aria-labelledby="tab-down">
-      <h2 id="lijstnaam" data-tekst="LijstNaam"></h2>
-      <div id="bestanden" role="group" aria-labelledby="lijstnaam"></div>
+      <table id="bestanden">
+        <caption id="lijstnaam"></caption>
+        <thead><tr><th scope="col" data-tekst="KolomNaam"></th><th scope="col" data-tekst="KolomSoort"></th><th scope="col" data-tekst="KolomGrootte"></th><th scope="col" data-tekst="KolomDatum"></th><th scope="col" data-tekst="KolomUitleg"></th></tr></thead>
+        <tbody></tbody>
+      </table>
       <p class="zacht" data-tekst="WebDownloadUitleg"></p>
-      <div class="rij"><button class="knop" id="knop-vernieuwen" data-tekst="KnopVernieuwen"></button></div>
+      <div class="rij"><button class="knop" id="knop-omhoog" data-tekst="KnopOmhoog"></button><button class="knop" id="knop-vernieuwen" data-tekst="KnopVernieuwen"></button></div>
     </div>
     <div role="tabpanel" id="paneel-up" aria-labelledby="tab-up" hidden>
       <h2 data-tekst="UploadUitlegNaam"></h2>
@@ -301,51 +304,75 @@ async function haalUitleg(fileid) {
   } catch (e) { log("INFO uitleg.txt not readable in this browser"); }
 }
 
-// Mappen (uitklappen met Enter of de Spatie) met de bestanden eronder, net als in de Windows-app.
-function toonLijst() {
-  const doel = $("bestanden");
-  const open = new Set([...doel.querySelectorAll("details[open]")].map((d) => d.dataset.pad));
-  doel.textContent = "";
-  const wortel = { mappen: new Map(), bestanden: [] };
+// Zoals de Verkenner: de mappen en bestanden van één map. Enter op een map = openen, op een bestand =
+// downloaden. Backspace of de knop "Map omhoog" = naar de map erboven.
+let huidigeMap = "";
+function inhoudVan(pad) {
+  const mappen = new Map(), bestanden = [];
   for (const b of lijst) {
-    let m = wortel, pad = "";
-    for (const deel of b.map ? b.map.split("/") : []) {
-      pad = pad ? pad + "/" + deel : deel;
-      if (!m.mappen.has(deel)) m.mappen.set(deel, { pad, mappen: new Map(), bestanden: [] });
-      m = m.mappen.get(deel);
+    if (b.map === pad) { bestanden.push(b); continue; }
+    if (pad === "" || b.map.startsWith(pad + "/")) {
+      const rest = pad === "" ? b.map : b.map.slice(pad.length + 1);
+      const naam = rest.split("/")[0];
+      if (naam) mappen.set(naam, (mappen.get(naam) || new Set()).add(rest.split("/")[1] ? "m:" + rest.split("/")[1] : "b:" + b.fileid));
     }
-    m.bestanden.push(b);
   }
-  const naam = (a, b) => a.toLowerCase().localeCompare(b.toLowerCase());
-  (function teken(m, ouder) {
-    for (const [mapnaam, sub] of [...m.mappen].sort((a, b) => naam(a[0], b[0]))) {
-      const d = document.createElement("details");
-      d.dataset.pad = sub.pad;
-      if (open.has(sub.pad)) d.open = true;
-      const s = document.createElement("summary"); s.textContent = mapnaam; d.appendChild(s);
-      const inhoud = document.createElement("div"); inhoud.className = "inhoud"; d.appendChild(inhoud);
-      teken(sub, inhoud);
-      ouder.appendChild(d);
-    }
-    if (!m.bestanden.length) return;
-    const ul = document.createElement("ul");
-    for (const b of m.bestanden.sort((a, b) => naam(a.naam, b.naam))) {
-      const li = document.createElement("li");
-      const tekst = document.createElement("span");
-      const n = document.createElement("strong"); n.textContent = b.naam; tekst.appendChild(n);
-      const g = document.createElement("span"); g.className = "gegevens";
-      g.textContent = ", " + [grootte(b.grootte), datum(b.datum), b.uitleg].filter(Boolean).join(", ");
-      tekst.appendChild(g); li.appendChild(tekst);
-      const knop = document.createElement("button");
-      knop.className = "knop hoofd";
-      knop.textContent = t("KnopDownloaden");
-      knop.setAttribute("aria-label", t("KnopDownloaden") + ": " + b.naam);
-      knop.addEventListener("click", () => download(b));
-      li.appendChild(knop); ul.appendChild(li);
-    }
-    ouder.appendChild(ul);
-  })(wortel, doel);
+  const vgl = (a, b) => a.toLowerCase().localeCompare(b.toLowerCase());
+  return {
+    mappen: [...mappen].map(([naam, items]) => ({ naam, aantal: items.size })).sort((a, b) => vgl(a.naam, b.naam)),
+    bestanden: bestanden.sort((a, b) => vgl(a.naam, b.naam)),
+  };
 }
+function toonLijst(kiesMap) {
+  if (huidigeMap && !lijst.some((b) => b.map === huidigeMap || b.map.startsWith(huidigeMap + "/"))) huidigeMap = "";
+  const { mappen, bestanden } = inhoudVan(huidigeMap);
+  $("lijstnaam").textContent = huidigeMap ? f("LijstInMap", huidigeMap.split("/").join(" > ")) : t("LijstNaam");
+  const tb = document.querySelector("#bestanden tbody");
+  tb.textContent = "";
+  let teFocussen = null;
+  const rij = (naamEl, soort, grootteTekst, datumTekst, uitleg) => {
+    const tr = document.createElement("tr");
+    const th = document.createElement("th"); th.scope = "row"; th.appendChild(naamEl); tr.appendChild(th);
+    for (const [w, k] of [[soort, ""], [grootteTekst, "getal"], [datumTekst, "getal"], [uitleg, ""]]) {
+      const td = document.createElement("td"); td.textContent = w; if (k) td.className = k; tr.appendChild(td);
+    }
+    tb.appendChild(tr);
+  };
+  for (const m of mappen) {
+    const k = document.createElement("button");
+    k.className = "naamknop map"; k.textContent = m.naam; k.dataset.map = m.naam;
+    k.addEventListener("click", () => openMap(huidigeMap ? huidigeMap + "/" + m.naam : m.naam));
+    if (kiesMap === m.naam) teFocussen = k;
+    rij(k, t("SoortMap"), f("AantalItems", String(m.aantal)), "", "");
+  }
+  for (const b of bestanden) {
+    const k = document.createElement("button");
+    k.className = "naamknop"; k.textContent = b.naam;
+    k.setAttribute("aria-label", b.naam + ", " + t("KnopDownloaden"));
+    k.addEventListener("click", () => download(b));
+    rij(k, t("SoortBestand"), grootte(b.grootte), datum(b.datum), b.uitleg);
+  }
+  return teFocussen || tb.querySelector("button");
+}
+function openMap(pad) {
+  huidigeMap = pad;
+  const eerste = toonLijst();
+  if (eerste) eerste.focus();
+  zeg(f("MapGeopend", pad.split("/").pop(), String(document.querySelectorAll("#bestanden tbody tr").length)));
+}
+function mapOmhoog() {
+  if (!huidigeMap) { zeg(t("AlInHoofdmap")); return; }
+  const delen = huidigeMap.split("/");
+  const vorige = delen.pop();
+  huidigeMap = delen.join("/");
+  const k = toonLijst(vorige);
+  if (k) k.focus();
+  zeg(huidigeMap ? f("TerugInMap", delen[delen.length - 1]) : t("TerugHoofdmap"));
+}
+$("bestanden").addEventListener("keydown", (e) => {
+  if (e.key === "Backspace") { e.preventDefault(); mapOmhoog(); }
+});
+$("knop-omhoog").addEventListener("click", mapOmhoog);
 
 // Downloaden gaat via de browser zelf (de downloadservers van pCloud staan geen voortgang toe vanuit een los bestand).
 async function download(b) {

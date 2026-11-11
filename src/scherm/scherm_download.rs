@@ -13,18 +13,10 @@ use super::overdracht_ui::{self, Taak};
 use super::win;
 use super::*;
 
-/// Zet de bestanden op het scherm, als boom met mappen. De keuze en open mappen blijven staan.
+/// Zet de bestanden op het scherm (de map die open is). Je blijft in dezelfde map en op dezelfde regel.
 pub fn vul_lijst(lijst: &[Bestand]) {
     let oud = met(|s| s.lijst.clone()).unwrap_or_default();
-    super::boom::vul(lijst, &oud);
-}
-
-/// Het gekozen bestand (geen map).
-pub fn gekozen_index() -> Option<usize> {
-    match super::boom::keuze() {
-        Some(super::boom::Keuze::Bestand(i)) => Some(i),
-        _ => None,
-    }
+    super::verkenner::vul(lijst, &oud);
 }
 
 /// Bewaar en toon een lijst.
@@ -105,15 +97,19 @@ pub fn lijst_klaar(uitkomst: Uitkomst<Vec<Bestand>>, handmatig: bool) {
 
 /// Enter of de knop Downloaden.
 pub fn start_download() {
+    // Een map: die openen (zoals in de Verkenner).
+    let bestand = match super::verkenner::keuze() {
+        Some(super::verkenner::Regel::Map { pad, .. }) => {
+            super::verkenner::open(&pad);
+            return;
+        }
+        Some(super::verkenner::Regel::Bestand(i)) => met(|s| s.lijst.get(i).cloned()).flatten(),
+        None => None,
+    };
     if overdracht_ui::bezig() {
         zeg(&t("AlBezig"), Belang::Belangrijk);
         return;
     }
-    if matches!(super::boom::keuze(), Some(super::boom::Keuze::Map(_))) {
-        zeg(&t("KiesBestandInMap"), Belang::Belangrijk);
-        return;
-    }
-    let bestand = gekozen_index().and_then(|i| met(|s| s.lijst.get(i).cloned()).flatten());
     let Some(b) = bestand else {
         zeg(&t("GeenKeuze"), Belang::Belangrijk);
         return;
