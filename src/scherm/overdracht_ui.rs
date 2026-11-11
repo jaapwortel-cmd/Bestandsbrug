@@ -21,6 +21,8 @@ pub enum Taak {
     Download { bestand: Bestand, doel: PathBuf },
     Upload { pad: PathBuf, grootte: u64 },
     Update { info: VersieInfo, bron: Bron },
+    /// Een hele map uploaden (als één zip-bestand met alles erin).
+    UploadMap { pad: PathBuf },
     /// Een hele map kopiëren: alle bestanden met hun plek op de computer.
     Map { naam: String, bestanden: Vec<(Bestand, PathBuf)>, doel: PathBuf },
 }
@@ -28,7 +30,7 @@ pub enum Taak {
 impl Taak {
     fn soort(&self) -> Soort {
         match self {
-            Taak::Upload { .. } => Soort::Upload,
+            Taak::Upload { .. } | Taak::UploadMap { .. } => Soort::Upload,
             _ => Soort::Download,
         }
     }
@@ -39,7 +41,7 @@ impl Taak {
     /// Waarom niet later verder (voor uploads en updates).
     fn uitleg(&self) -> String {
         match self {
-            Taak::Upload { .. } => t("EscUploadUitleg"),
+            Taak::Upload { .. } | Taak::UploadMap { .. } => t("EscUploadUitleg"),
             Taak::Update { .. } => t("EscUpdateUitleg"),
             Taak::Map { .. } => t("EscMapUitleg"),
             Taak::Download { .. } => String::new(),
@@ -85,6 +87,11 @@ pub fn start(taak: Taak, naam: String) {
             let p = pad.clone();
             log::info(&format!("Upload start: {} ({} bytes)", naam, grootte));
             Box::new(move |v| bestandsbrug::pcloud::upload::upload(&p, v).map(|_| None))
+        }
+        Taak::UploadMap { pad } => {
+            let p = pad.clone();
+            log::info(&format!("Folder upload start: {}", naam));
+            Box::new(move |v| bestandsbrug::pcloud::upload::upload_map(&p, v).map(|n| Some(PathBuf::from(n.to_string()))))
         }
         Taak::Map { naam: mapnaam, bestanden, .. } => {
             let l = bestanden.clone();
@@ -187,6 +194,24 @@ pub fn klaar(k: Klaar) {
             }
         },
         (Taak::Update { info, .. }, uitkomst) => super::update_ui::update_binnen(info, uitkomst),
+        (Taak::UploadMap { pad }, uitkomst) => {
+            let mapnaam = pad.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
+            match uitkomst {
+                Ok(aantal) => {
+                    let aantal = aantal.map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
+                    log::info(&format!("Folder upload done: {} ({} files)", l.naam, aantal));
+                    zeg(&f("MeldUploadMapKlaar", &[&mapnaam, &aantal]), Belang::Belangrijk);
+                }
+                Err(Fout::Gestopt(_)) => {
+                    log::info(&format!("Folder upload cancelled: {}", l.naam));
+                    zeg(&t("MeldUploadGeannuleerd"), Belang::Belangrijk);
+                }
+                Err(e) => {
+                    log::fout(&format!("Folder upload failed: {}: {}", l.naam, e.log_tekst()));
+                    zeg(&f("MeldUploadFout", &[&e.tekst()]), Belang::Belangrijk);
+                }
+            }
+        }
         (Taak::Map { naam, bestanden, doel }, uitkomst) => match uitkomst {
             Ok(_) => {
                 log::info(&format!("Folder download done: {} ({} files)", naam, bestanden.len()));

@@ -118,8 +118,10 @@ dialog::backdrop { background: rgba(0,0,0,.5); }
     <div role="tabpanel" id="paneel-up" aria-labelledby="tab-up" hidden>
       <h2 data-tekst="UploadUitlegNaam"></h2>
       <p id="upload-uitleg"></p>
-      <label for="upload-bestand" data-tekst="GekozenNaam"></label>
+      <label for="upload-bestand" data-tekst="KnopKiezen"></label>
       <input type="file" id="upload-bestand">
+      <label for="upload-map" data-tekst="KnopMapKiezen"></label>
+      <input type="file" id="upload-map" webkitdirectory>
       <div class="rij"><button class="knop hoofd" id="knop-upload" data-tekst="KnopUploaden"></button></div>
     </div>
   </section>
@@ -446,9 +448,56 @@ setInterval(() => {
   }
 }, 500);
 
+// Een map wordt één zip-bestand met alles erin (zonder inpakken, "stored"), net als in de Windows-app.
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(bytes, c = 0xffffffff) { for (let i = 0; i < bytes.length; i++) c = CRC[(c ^ bytes[i]) & 0xff] ^ (c >>> 8); return c; }
+async function maakZip(bestanden) {
+  const delen = [], centraal = []; let plek = 0;
+  const enc = new TextEncoder();
+  for (const b of bestanden) {
+    if (b.size >= 0xffffffff) throw new Error("te groot");
+    const naam = enc.encode(b.webkitRelativePath || b.name);
+    let c = 0xffffffff;
+    const lezer = b.stream().getReader();
+    for (;;) { const { done, value } = await lezer.read(); if (done) break; c = crc32(value, c); }
+    c = (c ^ 0xffffffff) >>> 0;
+    const kop = new DataView(new ArrayBuffer(30));
+    kop.setUint32(0, 0x04034b50, true); kop.setUint16(4, 20, true); kop.setUint16(6, 0x0800, true);
+    kop.setUint32(14, c, true); kop.setUint32(18, b.size, true); kop.setUint32(22, b.size, true); kop.setUint16(26, naam.length, true);
+    delen.push(kop.buffer, naam, b);
+    const cd = new DataView(new ArrayBuffer(46));
+    cd.setUint32(0, 0x02014b50, true); cd.setUint16(4, 20, true); cd.setUint16(6, 20, true); cd.setUint16(8, 0x0800, true);
+    cd.setUint32(16, c, true); cd.setUint32(20, b.size, true); cd.setUint32(24, b.size, true); cd.setUint16(28, naam.length, true);
+    cd.setUint32(42, plek, true);
+    centraal.push(cd.buffer, naam);
+    plek += 30 + naam.length + b.size;
+    if (plek >= 0xffffffff) throw new Error("te groot");
+  }
+  const cdGrootte = centraal.reduce((s, x) => s + x.byteLength, 0);
+  const eind = new DataView(new ArrayBuffer(22));
+  eind.setUint32(0, 0x06054b50, true); eind.setUint16(8, bestanden.length, true); eind.setUint16(10, bestanden.length, true);
+  eind.setUint32(12, cdGrootte, true); eind.setUint32(16, plek, true);
+  return new Blob([...delen, ...centraal, eind.buffer], { type: "application/zip" });
+}
+let uploadKeuze = "bestand";
+$("upload-bestand").addEventListener("change", () => { uploadKeuze = "bestand"; if ($("upload-bestand").files[0]) zeg(f("GekozenMelding", $("upload-bestand").files[0].name)); });
+$("upload-map").addEventListener("change", () => {
+  uploadKeuze = "map";
+  const fs = $("upload-map").files;
+  if (fs.length) zeg(f("GekozenMapMelding", (fs[0].webkitRelativePath || "").split("/")[0]));
+});
+
 async function startUpload() {
   if (upload) { zeg(t("AlBezig")); return; }
-  const bestand = $("upload-bestand").files[0];
+  let bestand = $("upload-bestand").files[0];
+  let mapNaam = "", aantal = 0;
+  if (uploadKeuze === "map" && $("upload-map").files.length) {
+    const fs = [...$("upload-map").files];
+    mapNaam = (fs[0].webkitRelativePath || "map").split("/")[0];
+    aantal = fs.length;
+    try { bestand = new File([await maakZip(fs)], mapNaam + ".zip", { type: "application/zip" }); }
+    catch (e) { zeg(f("MeldUploadFout", f("FoutLezen", String(e.message || e)))); return; }
+  }
   if (!bestand) { zeg(t("GeenUploadKeuze")); return; }
   if (bestand.size === 0) { zeg(t("LeegBestand")); return; }
   try {
@@ -469,7 +518,7 @@ async function startUpload() {
   const einde = (tekst, regel) => { log(regel); upload = null; zeg(tekst); };
   xhr.onload = () => {
     let j = null; try { j = JSON.parse(xhr.responseText); } catch (e) {}
-    if (j && j.result === 0) { zetBalk(100, true); einde(f("MeldUploadKlaar", bestand.name), `INFO Upload done: ${bestand.name} (${bestand.size} bytes)`); }
+    if (j && j.result === 0) { zetBalk(100, true); einde(mapNaam ? f("MeldUploadMapKlaar", mapNaam, String(aantal)) : f("MeldUploadKlaar", bestand.name), `INFO Upload done: ${bestand.name} (${bestand.size} bytes)`); }
     else { zetBalk(0, true); einde(f("MeldUploadFout", foutTekst(j)), `ERROR Upload failed: ${bestand.name}: ${j ? j.result : xhr.status}`); }
   };
   xhr.onerror = () => { zetBalk(0, true); einde(f("MeldUploadFout", t("FoutGeenInternet")), `ERROR Upload failed: ${bestand.name}: network`); };

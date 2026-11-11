@@ -123,6 +123,9 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
   Enter opent een map, Backspace of de knop "Map omhoog" gaat terug (met de vorige map gekozen). HTML net zo.
   Hele map kopiëren (Jaaps wens): knop Downloaden / Ctrl+C op een map -> map kiezen (standaard Downloads) ->
   download_map maakt de mappen en downloadt elk bestand (één voortgang; geen "later verder"). HTML: getpubzip
-  met folderid (zip, CORS ok), want een browser kan geen mappen maken. Installatiefout "Cannot focus a disabled or
+  met folderid (zip, CORS ok), want een browser kan geen mappen maken.
+  Hele map uploaden (Jaaps wens): knop "Map kiezen" -> upload_map maakt in de gegevensmap één zip (Stored,
+  "Mapnaam/..."), uploadt die en ruimt op. Reden: in de pCloud-documentatie kan uploadtolink geen mappen maken
+  (niet gecontroleerd in Jaaps map). HTML: webkitdirectory + eigen zip-schrijver (stored, CRC32) in JS. Installatiefout "Cannot focus a disabled or
   invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
 - Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).

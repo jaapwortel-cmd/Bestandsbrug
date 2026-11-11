@@ -9,7 +9,7 @@ Een hele map kopiëren naar je computer: kies de map (zonder hem te openen) en k
 Met F5 haal je de lijst opnieuw op. Staat er een nieuwe app in de lijst, dan hoor je dat.
 
 3. Een bestand naar Jaap sturen
-Ga naar het tabblad Uploaden, met Ctrl+Tab of Ctrl+2. Kies Bestand kiezen. Kies daarna Uploaden. Je hoort "Klaar, bedankt!" als het gelukt is. Je kunt de bestanden van anderen niet zien. Alleen Jaap ziet ze.
+Ga naar het tabblad Uploaden, met Ctrl+Tab of Ctrl+2. Kies Bestand kiezen, of Map kiezen voor een hele map. Kies daarna Uploaden. Een hele map komt bij Jaap als één zip-bestand, met alle mappen en bestanden erin. Je hoort "Klaar, bedankt!" als het gelukt is. Je kunt de bestanden van anderen niet zien. Alleen Jaap ziet ze.
 
 4. De voortgang
 Tijdens een download of upload hoor je elke 6 seconden hoe ver hij is. Bijvoorbeeld: Downloaden, 40 procent, nog ongeveer 20 seconden.

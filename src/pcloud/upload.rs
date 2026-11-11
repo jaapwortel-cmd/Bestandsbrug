@@ -107,3 +107,72 @@ pub fn upload(pad: &Path, v: &Voortgang) -> Uitkomst<()> {
     v.gedaan.store(lengte, Ordering::Relaxed);
     Ok(())
 }
+
+/// Een hele map uploaden. Een uploadlink van pCloud kan zelf geen mappen maken. Daarom maken we eerst op de eigen
+/// computer één zip-bestand ("Mapnaam.zip") met de map en alles erin (mappen blijven mappen), en sturen dat.
+/// Het zip-bestand komt in de gegevensmap en wordt daarna weer weggehaald. Geeft het aantal bestanden.
+pub fn upload_map(map: &Path, v: &Voortgang) -> Uitkomst<usize> {
+    let naam = map.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_else(|| "map".into());
+    let werk = crate::paden::gegevensmap().join("upload");
+    let _ = std::fs::remove_dir_all(&werk);
+    std::fs::create_dir_all(&werk).map_err(|e| Fout::Opslaan(io_tekst(&e)))?;
+    let zip = werk.join(format!("{}.zip", crate::pcloud::download::veilige_naam(&naam)));
+    let uitkomst = maak_zip(map, &naam, &zip, v).and_then(|aantal| upload(&zip, v).map(|_| aantal));
+    let _ = std::fs::remove_dir_all(&werk);
+    uitkomst
+}
+
+/// Alle bestanden in een map (ook in submappen), met hun naam in de zip ("Map/sub/bestand").
+pub fn bestanden_in(map: &Path, naam: &str) -> Uitkomst<Vec<(std::path::PathBuf, String)>> {
+    let mut uit = Vec::new();
+    let mut stapel = vec![(map.to_path_buf(), naam.to_string())];
+    while let Some((m, binnen)) = stapel.pop() {
+        let mut items: Vec<_> = std::fs::read_dir(&m).map_err(|e| Fout::Lezen(io_tekst(&e)))?.flatten().collect();
+        items.sort_by_key(|e| e.file_name());
+        for e in items {
+            let soort = match e.file_type() {
+                Ok(s) => s,
+                Err(_) => continue,
+            };
+            let n = format!("{binnen}/{}", e.file_name().to_string_lossy());
+            if soort.is_dir() {
+                stapel.push((e.path(), n));
+            } else if soort.is_file() {
+                uit.push((e.path(), n));
+            }
+        }
+    }
+    uit.sort_by(|a, b| a.1.cmp(&b.1));
+    Ok(uit)
+}
+
+/// Maakt het zip-bestand, in stukjes (nooit een heel bestand in het geheugen). Stoppen kan tussendoor.
+pub fn maak_zip(map: &Path, naam: &str, zip: &Path, v: &Voortgang) -> Uitkomst<usize> {
+    use std::io::Write;
+    let bestanden = bestanden_in(map, naam)?;
+    if bestanden.is_empty() {
+        return Err(Fout::LegeMap);
+    }
+    let uit = File::create(zip).map_err(|e| Fout::Opslaan(io_tekst(&e)))?;
+    let mut z = zip::ZipWriter::new(std::io::BufWriter::with_capacity(STUK_BYTES, uit));
+    let mut buf = vec![0u8; STUK_BYTES];
+    for (pad, binnen) in &bestanden {
+        let mut f = File::open(pad).map_err(|e| Fout::Lezen(io_tekst(&e)))?;
+        let groot = f.metadata().map(|m| m.len()).unwrap_or(0) >= 0xFFFF_FFFF;
+        // Niet inpakken (Stored): snel, en apps zijn meestal al ingepakt.
+        let opties = zip::write::SimpleFileOptions::default().compression_method(zip::CompressionMethod::Stored).large_file(groot);
+        z.start_file(binnen.as_str(), opties).map_err(|e| Fout::Opslaan(e.to_string()))?;
+        loop {
+            if let Some(s) = v.stop() {
+                return Err(Fout::Gestopt(s));
+            }
+            let n = f.read(&mut buf).map_err(|e| Fout::Lezen(io_tekst(&e)))?;
+            if n == 0 {
+                break;
+            }
+            z.write_all(&buf[..n]).map_err(|e| Fout::Opslaan(io_tekst(&e)))?;
+        }
+    }
+    z.finish().map_err(|e| Fout::Opslaan(e.to_string()))?.flush().map_err(|e| Fout::Opslaan(io_tekst(&e)))?;
+    Ok(bestanden.len())
+}

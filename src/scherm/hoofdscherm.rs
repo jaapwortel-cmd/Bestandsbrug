@@ -23,6 +23,7 @@ pub const ID_KNOP_OMHOOG: u16 = 15;
 pub const ID_UPLOAD_UITLEG_LABEL: u16 = 20;
 pub const ID_UPLOAD_UITLEG: u16 = 21;
 pub const ID_KNOP_KIEZEN: u16 = 22;
+pub const ID_KNOP_MAP_KIEZEN: u16 = 26;
 pub const ID_GEKOZEN_LABEL: u16 = 23;
 pub const ID_GEKOZEN: u16 = 24;
 pub const ID_KNOP_UPLOAD: u16 = 25;
@@ -47,6 +48,7 @@ pub struct Onderdelen {
     pub upload_uitleg_label: HWND,
     pub upload_uitleg: HWND,
     pub knop_kiezen: HWND,
+    pub knop_map_kiezen: HWND,
     pub gekozen_label: HWND,
     pub gekozen: HWND,
     pub knop_upload: HWND,
@@ -60,11 +62,11 @@ impl Onderdelen {
     fn download_pagina(&self) -> [HWND; 5] {
         [self.lijst_label, self.lijst, self.knop_download, self.knop_omhoog, self.knop_vernieuwen]
     }
-    fn upload_pagina(&self) -> [HWND; 6] {
-        [self.upload_uitleg_label, self.upload_uitleg, self.knop_kiezen, self.gekozen_label, self.gekozen, self.knop_upload]
+    fn upload_pagina(&self) -> [HWND; 7] {
+        [self.upload_uitleg_label, self.upload_uitleg, self.knop_kiezen, self.knop_map_kiezen, self.gekozen_label, self.gekozen, self.knop_upload]
     }
-    pub fn knoppen(&self) -> [HWND; 5] {
-        [self.knop_download, self.knop_omhoog, self.knop_vernieuwen, self.knop_kiezen, self.knop_upload]
+    pub fn knoppen(&self) -> [HWND; 6] {
+        [self.knop_download, self.knop_omhoog, self.knop_vernieuwen, self.knop_kiezen, self.knop_map_kiezen, self.knop_upload]
     }
 }
 
@@ -101,6 +103,7 @@ pub fn maak_onderdelen(h: HWND) {
         upload_uitleg_label: m("STATIC", LABEL, 0, ID_UPLOAD_UITLEG_LABEL),
         upload_uitleg: m("EDIT", LEESVAK, 0, ID_UPLOAD_UITLEG),
         knop_kiezen: m("BUTTON", KNOP, 0, ID_KNOP_KIEZEN),
+        knop_map_kiezen: m("BUTTON", KNOP, 0, ID_KNOP_MAP_KIEZEN),
         gekozen_label: m("STATIC", LABEL, 0, ID_GEKOZEN_LABEL),
         gekozen: m("EDIT", WS_TABSTOP.0 | ES_READONLY as u32 | ES_AUTOHSCROLL as u32, 0, ID_GEKOZEN),
         knop_upload: m("BUTTON", KNOP, 0, ID_KNOP_UPLOAD),
@@ -156,12 +159,10 @@ pub fn zet_teksten() {
     win::zet_tekst(o.upload_uitleg_label, &t("UploadUitlegNaam"));
     win::zet_tekst(o.upload_uitleg, &t("UploadUitleg").replace('\n', "\r\n"));
     win::zet_tekst(o.knop_kiezen, &t("KnopKiezen"));
+    win::zet_tekst(o.knop_map_kiezen, &t("KnopMapKiezen"));
     win::zet_tekst(o.gekozen_label, &t("GekozenNaam"));
     let gekozen = met(|s| s.upload_pad.clone()).flatten();
-    win::zet_tekst(
-        o.gekozen,
-        &gekozen.and_then(|p| p.file_name().map(|n| n.to_string_lossy().to_string())).unwrap_or_else(|| t("GeenBestand")),
-    );
+    win::zet_tekst(o.gekozen, &gekozen.map(|p| super::scherm_upload::gekozen_tekst(&p)).unwrap_or_else(|| t("GeenBestand")));
     win::zet_tekst(o.knop_upload, &t("KnopUploaden"));
     win::zet_tekst(o.voortgang_label, &t("VoortgangNaam"));
     win::zet_tekst(o.balk, &t("VoortgangNaam"));
@@ -178,7 +179,7 @@ pub fn pas_thema_toe() {
     let th = thema::huidig();
     let donker = th.weergave == Weergave::Donker && !th.hoog_contrast;
     let alle = [
-        o.tab, o.lijst_label, o.lijst, o.knop_download, o.knop_omhoog, o.knop_vernieuwen, o.upload_uitleg_label, o.upload_uitleg, o.knop_kiezen,
+        o.tab, o.lijst_label, o.lijst, o.knop_download, o.knop_omhoog, o.knop_vernieuwen, o.upload_uitleg_label, o.upload_uitleg, o.knop_kiezen, o.knop_map_kiezen,
         o.gekozen_label, o.gekozen, o.knop_upload, o.voortgang_label, o.balk, o.melding_label, o.melding,
     ];
     for h in alle {
@@ -293,7 +294,9 @@ pub fn indeling() {
     let uitleg_h = regel * 3 + m;
     win::verplaats(o.upload_uitleg, x, y, b, uitleg_h);
     y += uitleg_h + m;
-    win::verplaats(o.knop_kiezen, x, y, knop_b(o.knop_kiezen), knop_h);
+    let bk = knop_b(o.knop_kiezen);
+    win::verplaats(o.knop_kiezen, x, y, bk, knop_h);
+    win::verplaats(o.knop_map_kiezen, x + bk + m, y, knop_b(o.knop_map_kiezen), knop_h);
     y += knop_h + m;
     win::verplaats(o.gekozen_label, x, y, b, regel);
     y += regel + m / 3;

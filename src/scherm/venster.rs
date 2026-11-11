@@ -246,6 +246,10 @@ pub fn opdracht(id: u16) {
             hoofdscherm::kies_pagina(1, false);
             scherm_upload::kies_bestand();
         }
+        hs::ID_KNOP_MAP_KIEZEN | m::ID_UPLOAD_MAP_KIEZEN => {
+            hoofdscherm::kies_pagina(1, false);
+            scherm_upload::kies_map();
+        }
         hs::ID_KNOP_UPLOAD | m::ID_UPLOADEN => {
             hoofdscherm::kies_pagina(1, false);
             scherm_upload::start_upload();

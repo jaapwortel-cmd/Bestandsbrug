@@ -123,3 +123,24 @@ fn hele_map_downloaden() {
     assert_eq!(l[2].1, doel.join("d_e_.txt"));
     assert_eq!(download::veilige_naam(".."), "_");
 }
+
+#[test]
+fn map_inpakken_voor_upload() {
+    let map = hulp::eigen_map("upload-map");
+    let bron = map.join("Mijn map");
+    std::fs::create_dir_all(bron.join("sub")).unwrap();
+    std::fs::write(bron.join("a.txt"), "aaa").unwrap();
+    std::fs::write(bron.join("sub").join("b.txt"), vec![7u8; 600_000]).unwrap();
+    let zip = map.join("Mijn map.zip");
+    let n = upload::maak_zip(&bron, "Mijn map", &zip, &bestandsbrug::overdracht::Voortgang::new()).unwrap();
+    assert_eq!(n, 2);
+    let mut a = zip::ZipArchive::new(std::fs::File::open(&zip).unwrap()).unwrap();
+    let mut namen: Vec<String> = (0..a.len()).map(|i| a.by_index(i).unwrap().name().to_string()).collect();
+    namen.sort();
+    assert_eq!(namen, vec!["Mijn map/a.txt", "Mijn map/sub/b.txt"]);
+    assert_eq!(a.by_name("Mijn map/sub/b.txt").unwrap().size(), 600_000);
+    // Een lege map geeft een duidelijke fout.
+    std::fs::create_dir_all(map.join("Leeg")).unwrap();
+    let r = upload::maak_zip(&map.join("Leeg"), "Leeg", &map.join("Leeg.zip"), &bestandsbrug::overdracht::Voortgang::new());
+    assert!(matches!(r, Err(Fout::LegeMap)));
+}

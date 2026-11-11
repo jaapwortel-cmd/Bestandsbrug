@@ -18,6 +18,7 @@ pub const ID_VERNIEUWEN: u16 = 1004;
 pub const ID_NAAR_DOWNLOAD: u16 = 1005;
 pub const ID_NAAR_UPLOAD: u16 = 1006;
 pub const ID_AFSLUITEN: u16 = 1007;
+pub const ID_UPLOAD_MAP_KIEZEN: u16 = 1008;
 pub const ID_NL: u16 = 1101;
 pub const ID_EN: u16 = 1102;
 pub const ID_LICHT: u16 = 1201;
@@ -68,6 +69,7 @@ pub fn bouw(h: HWND) {
         item(bestand, ID_VERNIEUWEN, "MenuVernieuwen");
         streep(bestand);
         item(bestand, ID_UPLOAD_KIEZEN, "MenuUploadKiezen");
+        item(bestand, ID_UPLOAD_MAP_KIEZEN, "MenuUploadMapKiezen");
         item(bestand, ID_UPLOADEN, "MenuUploaden");
         streep(bestand);
         item(bestand, ID_NAAR_DOWNLOAD, "MenuNaarDownload");

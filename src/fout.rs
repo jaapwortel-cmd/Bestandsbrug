@@ -24,6 +24,8 @@ pub enum Fout {
     Lezen(String),
     Onvolledig,
     Beschadigd,
+    /// Een map zonder bestanden.
+    LegeMap,
     Gestopt(Stop),
     Anders(String),
 }
@@ -47,6 +49,7 @@ impl Fout {
             Fout::Lezen(m) => taal::f("FoutLezen", &[m]),
             Fout::Onvolledig => taal::t("FoutOnvolledig"),
             Fout::Beschadigd => taal::t("UpdateBeschadigd"),
+            Fout::LegeMap => taal::t("MapLeeg"),
             Fout::Gestopt(_) => String::new(),
             Fout::Anders(m) => taal::f("FoutOnbekend", &[m]),
         }
@@ -65,6 +68,7 @@ impl Fout {
             Fout::Lezen(m) => format!("cannot read: {m}"),
             Fout::Onvolledig => "download incomplete".into(),
             Fout::Beschadigd => "SHA-256 does not match".into(),
+            Fout::LegeMap => "folder is empty".into(),
             Fout::Gestopt(Stop::Pauze) => "paused".into(),
             Fout::Gestopt(Stop::Annuleer) => "cancelled".into(),
             Fout::Anders(m) => m.clone(),
