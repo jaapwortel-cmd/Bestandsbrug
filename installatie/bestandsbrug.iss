@@ -81,12 +81,18 @@ Name: "{userdesktop}\{cm:AppNaam}"; Filename: "{app}\Bestandsbrug.exe"; Tasks: b
 [Run]
 ; Gewone installatie: een vakje "nu starten". Een update (stil) start de app vanzelf weer.
 Filename: "{app}\Bestandsbrug.exe"; Description: "{cm:NuStarten}"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\Bestandsbrug.exe"; Flags: nowait; Check: WizardSilent
+Filename: "{app}\Bestandsbrug.exe"; Flags: nowait; Check: IsStil
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 
 [Code]
+// Stil installeren (een update vanuit de app): dan start de app daarna vanzelf weer.
+function IsStil: Boolean;
+begin
+  Result := WizardSilent;
+end;
+
 // De pagina met de privacyverklaring: een duidelijke kop en uitleg, de focus in de tekst (lezen met de
 // pijltjes) en verder met Enter (de standaardknop) of de Spatie.
 procedure PrivacyToets(Sender: TObject; var Key: Word; Shift: TShiftState);
