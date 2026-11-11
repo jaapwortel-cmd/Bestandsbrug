@@ -19,6 +19,7 @@ concurrency:
 jobs:
   bouw:
     runs-on: windows-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
 
@@ -38,9 +39,11 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $setup = 'oplevering\Bestandsbrug-Setup.exe'
           $map = Join-Path $env:LOCALAPPDATA 'Programs\Bestandsbrug'
-          $p = Start-Process -FilePath $setup -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LANG=nl') -PassThru -Wait
+          # Niet -Wait: dat wacht ook op de app, die na een stille installatie vanzelf start.
+          $p = Start-Process -FilePath $setup -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LANG=nl') -PassThru
+          if (-not $p.WaitForExit(180000)) { throw 'Installeren duurt te lang.' }
           if ($p.ExitCode -ne 0) { throw ('Installeren mislukt, code ' + $p.ExitCode) }
-          Start-Sleep -Seconds 3
+          Start-Sleep -Seconds 5
           Get-Process Bestandsbrug -ErrorAction SilentlyContinue | Stop-Process -Force
           foreach ($f in @('Bestandsbrug.exe', 'Privacyverklaring.txt', 'Privacy-statement.txt', 'LEESMIJ.txt')) {
             if (-not (Test-Path (Join-Path $map $f))) { throw "Na installeren staat $f er niet." }
@@ -67,7 +70,7 @@ jobs:
           $log = Join-Path $env:APPDATA 'Bestandsbrug\Bestandsbrug.log'
           $voor = @(Select-String -LiteralPath $log -Pattern ' Start, version').Count
           $p = Start-Process -FilePath $setup -ArgumentList @('/SILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LANG=en', '/LOG=update-installatie.log') -PassThru
-          $p.WaitForExit()
+          if (-not $p.WaitForExit(180000)) { throw 'Opnieuw installeren duurt te lang.' }
           if ($p.ExitCode -ne 0) { throw ('Opnieuw installeren (update) mislukt, code ' + $p.ExitCode) }
           Start-Sleep -Seconds 8
           $na = @(Select-String -LiteralPath $log -Pattern ' Start, version').Count
@@ -110,7 +113,8 @@ jobs:
         run: |
           $map = Join-Path $env:LOCALAPPDATA 'Programs\Bestandsbrug'
           Get-Process Bestandsbrug -ErrorAction SilentlyContinue | Stop-Process -Force
-          $p = Start-Process -FilePath (Join-Path $map 'unins000.exe') -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -PassThru -Wait
+          $p = Start-Process -FilePath (Join-Path $map 'unins000.exe') -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -PassThru
+          [void]$p.WaitForExit(120000)
           Start-Sleep -Seconds 3
           if (Test-Path (Join-Path $map 'Bestandsbrug.exe')) { throw 'Na verwijderen staat Bestandsbrug.exe er nog.' }
           Write-Host 'Verwijderen: goed.'
