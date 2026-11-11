@@ -64,12 +64,17 @@ jobs:
           # Instellingen moeten een update overleven.
           $voorkeuren = Join-Path $env:APPDATA 'Bestandsbrug\voorkeuren.json'
           '{"taal":"en","weergave":"donker","update_later":null}' | Set-Content -LiteralPath $voorkeuren -Encoding ASCII
-          $p = Start-Process -FilePath $setup -ArgumentList @('/SILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LANG=en') -PassThru -Wait
+          $log = Join-Path $env:APPDATA 'Bestandsbrug\Bestandsbrug.log'
+          $voor = @(Select-String -LiteralPath $log -Pattern ' Start, version').Count
+          $p = Start-Process -FilePath $setup -ArgumentList @('/SILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LANG=en', '/LOG=update-installatie.log') -PassThru
+          $p.WaitForExit()
           if ($p.ExitCode -ne 0) { throw ('Opnieuw installeren (update) mislukt, code ' + $p.ExitCode) }
-          Start-Sleep -Seconds 5
-          $loopt = Get-Process Bestandsbrug -ErrorAction SilentlyContinue
-          if (-not $loopt) { throw 'Na een stille update startte de app niet vanzelf weer.' }
-          $loopt | Stop-Process -Force
+          Start-Sleep -Seconds 8
+          $na = @(Select-String -LiteralPath $log -Pattern ' Start, version').Count
+          Get-Content -LiteralPath $log -Tail 5 | Write-Host
+          Select-String -LiteralPath 'update-installatie.log' -Pattern 'Bestandsbrug.exe|Run|Filename' | Select-Object -Last 8 | ForEach-Object { Write-Host $_.Line }
+          if ($na -le $voor) { throw 'Na een stille update startte de app niet vanzelf weer.' }
+          Get-Process Bestandsbrug -ErrorAction SilentlyContinue | Stop-Process -Force
           if ((Get-Content -LiteralPath $voorkeuren -Raw) -notmatch '"donker"') { throw 'De instellingen zijn weg na de update.' }
           $lnkEn = Join-Path ([Environment]::GetFolderPath('Programs')) 'Filebridge.lnk'
           if (-not (Test-Path $lnkEn)) { throw 'De Engelse snelkoppeling (Filebridge) ontbreekt.' }
