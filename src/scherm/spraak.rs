@@ -65,6 +65,15 @@ pub fn zeg(bron: HWND, tekst: &str, belang: Belang) {
     uia_zeg(bron, tekst, belang);
 }
 
+/// Geeft een onderdeel een naam voor de schermlezer (voor onderdelen zonder label, zoals de tabbladen).
+pub fn zet_naam(h: HWND, naam: &str) {
+    unsafe {
+        let Ok(diensten): windows::core::Result<IAccPropServices> = CoCreateInstance(&CLSID_AccPropServices, None, CLSCTX_INPROC_SERVER) else { return };
+        let w = super::win::ws(naam);
+        let _ = diensten.SetHwndPropStr(h, OBJID_CLIENT.0 as u32, CHILDID_SELF, PROPID_ACC_NAME, super::win::pc(&w));
+    }
+}
+
 /// De voortgangsbalk krijgt de rol "voortgangsbalk" en een waarde die de schermlezer kan lezen
 /// (bijvoorbeeld "40 procent"). We sturen bewust GEEN wijzigingsbericht, zodat de schermlezer niet bij
 /// elke stap praat; de melding komt alleen van de timer van 6 seconden.

@@ -114,3 +114,6 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
 ## Stand van zaken
 
 - 1.0.0 (11 nov 2026): eerste versie, alles uit de opdracht. Nog door Jaap te testen met JAWS.
+- Bouwronde (11 nov): alles groen. FlaUI-controle: namen en Tab-volgorde goed; de menu-controle van het script
+  is gemaakt voor WinForms-menu's en vindt gewone Win32-menu's niet (met F10/Alt werken ze wel; gecontroleerd met Wine).
+- Jaap zette op 11 nov de apps in submappen; de lijst toont daarom hoofdmap + app-mappen (kolom App).

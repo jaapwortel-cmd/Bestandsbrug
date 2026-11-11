@@ -130,7 +130,9 @@ pub fn zet_teksten() {
     let o = onderdelen();
     let h = hwnd();
     win::zet_tekst(h, &taal::app_naam());
-    // Tabbladen.
+    // Tabbladen (met een naam voor de schermlezer: er staat geen label voor).
+    win::zet_tekst(o.tab, &t("TabsNaam"));
+    super::spraak::zet_naam(o.tab, &t("TabsNaam"));
     snd(o.tab, TCM_DELETEALLITEMS, 0, 0);
     for (i, k) in ["TabDownloaden", "TabUploaden"].iter().enumerate() {
         let tekst = win::ws(&t(k));

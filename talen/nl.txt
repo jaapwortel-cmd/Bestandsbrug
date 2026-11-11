@@ -184,3 +184,4 @@ GekozenMelding = Gekozen: {0}. Kies nu Uploaden.
 UpdateBinnen = De nieuwe versie is gedownload en gecontroleerd.
 EscUpdateUitleg = Een update kan niet later verdergaan. Je kunt doorgaan of alles annuleren.
 KolomMap = App
+TabsNaam = Downloaden of uploaden
