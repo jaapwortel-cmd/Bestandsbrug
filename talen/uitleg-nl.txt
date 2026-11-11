@@ -4,7 +4,8 @@ UITLEG OVER {naam}
 Met {naam} kun je de apps van Jaap downloaden. Je kunt ook een bestand naar Jaap sturen (uploaden). Alles gaat via pCloud. Je hoeft je niet aan te melden.
 
 2. Een app downloaden
-Ga naar het tabblad Downloaden. Het werkt zoals de Verkenner van Windows. Je ziet eerst de mappen, één per app. Loop met de pijltjes omhoog en omlaag. Druk op Enter om een map te openen. Daarin staan de bestanden. Met Backspace (of de knop Map omhoog) ga je terug naar de map erboven. Kies een bestand en druk op Enter, of kies de knop Downloaden. Kies waar je het bestand wilt opslaan. Standaard is dat de map Downloads.
+Ga naar het tabblad Downloaden. Het werkt zoals de Verkenner van Windows. Je ziet eerst de mappen, één per app. Loop met de pijltjes omhoog en omlaag. Druk op Enter om een map te openen. Daarin staan de bestanden. Met Backspace (of de knop Map omhoog) ga je terug naar de map erboven. Kies een bestand en druk op Enter, of kies de knop Downloaden.
+Een hele map kopiëren naar je computer: kies de map (zonder hem te openen) en kies de knop Downloaden, of druk op Ctrl+C. Kies daarna waar de map moet komen. De map komt daar met alle bestanden en mappen erin. Kies waar je het bestand wilt opslaan. Standaard is dat de map Downloads.
 Met F5 haal je de lijst opnieuw op. Staat er een nieuwe app in de lijst, dan hoor je dat.
 
 3. Een bestand naar Jaap sturen
@@ -24,6 +25,7 @@ Een upload kan niet later verdergaan. Daar heb je alleen Doorgaan en Alles nu an
 - Ctrl+Tab: naar het andere tabblad. Ctrl+1: Downloaden. Ctrl+2: Uploaden.
 - Enter: de gekozen map openen, of het gekozen bestand downloaden.
 - Backspace: terug naar de map erboven.
+- Ctrl+C of Alt+D: het gekozen bestand downloaden, of de gekozen map met alles erin kopiëren.
 - F5: de lijst vernieuwen.
 - F1: deze uitleg.
 - Alt+F4: {naam} afsluiten.

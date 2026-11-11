@@ -348,6 +348,11 @@ fn voor_toets(msg: &MSG) -> bool {
             true
         }
         VK_RETURN if !ctrl => hoofdscherm::enter(focus),
+        // Ctrl+C in de lijst: het bestand of de hele map naar de computer kopiëren (downloaden).
+        VK_C if ctrl && focus == hoofdscherm::onderdelen().lijst => {
+            scherm_download::start_download();
+            true
+        }
         VK_BACK if focus == hoofdscherm::onderdelen().lijst => {
             verkenner::omhoog();
             true

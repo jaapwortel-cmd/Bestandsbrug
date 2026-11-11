@@ -352,7 +352,7 @@ pub fn focus_start() {
 pub fn enter(focus: HWND) -> bool {
     let o = onderdelen();
     if focus == o.lijst {
-        super::scherm_download::start_download();
+        super::scherm_download::enter_in_lijst();
         return true;
     }
     if o.knoppen().contains(&focus) {
@@ -398,7 +398,7 @@ pub fn melding_van_onderdeel(kop: &NMHDR, lp: LPARAM) -> Option<LRESULT> {
     }
     // Dubbelklik = hetzelfde als Enter (map openen of bestand downloaden).
     if kop.hwndFrom == o.lijst && kop.code == NM_DBLCLK {
-        super::scherm_download::start_download();
+        super::scherm_download::enter_in_lijst();
         return Some(LRESULT(0));
     }
     let _ = lp;

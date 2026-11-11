@@ -96,11 +96,20 @@ pub fn lijst_klaar(uitkomst: Uitkomst<Vec<Bestand>>, handmatig: bool) {
 }
 
 /// Enter of de knop Downloaden.
+/// Enter of dubbelklik in de lijst: een map openen (zoals in de Verkenner), een bestand downloaden.
+pub fn enter_in_lijst() {
+    if let Some(super::verkenner::Regel::Map { pad, .. }) = super::verkenner::keuze() {
+        super::verkenner::open(&pad);
+        return;
+    }
+    start_download();
+}
+
+/// De knop Downloaden, Ctrl+C of het menu: een bestand downloaden, of een hele map kopiëren naar de computer.
 pub fn start_download() {
-    // Een map: die openen (zoals in de Verkenner).
     let bestand = match super::verkenner::keuze() {
-        Some(super::verkenner::Regel::Map { pad, .. }) => {
-            super::verkenner::open(&pad);
+        Some(super::verkenner::Regel::Map { naam, pad, .. }) => {
+            kopieer_map(&naam, &pad);
             return;
         }
         Some(super::verkenner::Regel::Bestand(i)) => met(|s| s.lijst.get(i).cloned()).flatten(),
@@ -120,6 +129,26 @@ pub fn start_download() {
     }
     let naam = b.naam.clone();
     overdracht_ui::start(Taak::Download { bestand: b, doel }, naam);
+}
+
+/// Een hele map kopiëren: kies waar hij komt (standaard Downloads); daar komt de map met alles erin.
+fn kopieer_map(naam: &str, pad: &str) {
+    if overdracht_ui::bezig() {
+        zeg(&t("AlBezig"), Belang::Belangrijk);
+        return;
+    }
+    let Some(basis) = dialogen::kies_map(&f("MapKopierenTitel", &[naam])) else { return };
+    let doel = basis.join(bestandsbrug::pcloud::download::veilige_naam(naam));
+    if doel.exists() && !vragen::ja_nee(hwnd(), &f("MapBestaatAl", &[naam]), false) {
+        return;
+    }
+    let lijst = met(|s| s.lijst.clone()).unwrap_or_default();
+    let bestanden = bestandsbrug::pcloud::download::bestanden_in_map(&lijst, pad, &doel);
+    if bestanden.is_empty() {
+        zeg(&t("MapLeeg"), Belang::Belangrijk);
+        return;
+    }
+    overdracht_ui::start(Taak::Map { naam: naam.to_string(), bestanden, doel }, f("MapNaam", &[naam]));
 }
 
 /// Bij het opstarten: er is een download die niet af is. Mag die verder?

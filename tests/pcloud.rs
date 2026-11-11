@@ -102,3 +102,24 @@ fn stoppen_en_annuleren() {
     assert!(!deel_pad(&doel).exists(), "bij annuleren is het halve bestand weg");
     assert!(!doel.exists());
 }
+
+#[test]
+fn hele_map_downloaden() {
+    let map = hulp::eigen_map("hele-map");
+    let maak = |id: u64, naam: &str, mapnaam: &str, grootte: u64| bestandsbrug::pcloud::lijst::Bestand {
+        fileid: id, naam: naam.into(), grootte, gewijzigd: String::new(), hash: 0, map: mapnaam.into(), uitleg: String::new(),
+    };
+    let lijst = vec![
+        maak(1, "a.exe", "App", 10),
+        maak(2, "b.dll", "App/sub", 20),
+        maak(3, "c.exe", "Ander", 30),
+        maak(4, "d:e?.txt", "App", 5),
+    ];
+    let doel = map.join("App");
+    let l = download::bestanden_in_map(&lijst, "App", &doel);
+    assert_eq!(l.len(), 3);
+    assert_eq!(l[0].1, doel.join("a.exe"));
+    assert_eq!(l[1].1, doel.join("sub").join("b.dll"));
+    assert_eq!(l[2].1, doel.join("d_e_.txt"));
+    assert_eq!(download::veilige_naam(".."), "_");
+}

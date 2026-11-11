@@ -21,6 +21,8 @@ pub enum Taak {
     Download { bestand: Bestand, doel: PathBuf },
     Upload { pad: PathBuf, grootte: u64 },
     Update { info: VersieInfo, bron: Bron },
+    /// Een hele map kopiëren: alle bestanden met hun plek op de computer.
+    Map { naam: String, bestanden: Vec<(Bestand, PathBuf)>, doel: PathBuf },
 }
 
 impl Taak {
@@ -39,6 +41,7 @@ impl Taak {
         match self {
             Taak::Upload { .. } => t("EscUploadUitleg"),
             Taak::Update { .. } => t("EscUpdateUitleg"),
+            Taak::Map { .. } => t("EscMapUitleg"),
             Taak::Download { .. } => String::new(),
         }
     }
@@ -82,6 +85,12 @@ pub fn start(taak: Taak, naam: String) {
             let p = pad.clone();
             log::info(&format!("Upload start: {} ({} bytes)", naam, grootte));
             Box::new(move |v| bestandsbrug::pcloud::upload::upload(&p, v).map(|_| None))
+        }
+        Taak::Map { naam: mapnaam, bestanden, .. } => {
+            let l = bestanden.clone();
+            let bytes: u64 = l.iter().map(|(b, _)| b.grootte).sum();
+            log::info(&format!("Folder download start: {} ({} files, {} bytes)", mapnaam, l.len(), bytes));
+            Box::new(move |v| bestandsbrug::pcloud::download::download_map(&l, v).map(|_| None))
         }
         Taak::Update { info, bron } => {
             let (i, b) = (info.clone(), bron.clone());
@@ -178,6 +187,21 @@ pub fn klaar(k: Klaar) {
             }
         },
         (Taak::Update { info, .. }, uitkomst) => super::update_ui::update_binnen(info, uitkomst),
+        (Taak::Map { naam, bestanden, doel }, uitkomst) => match uitkomst {
+            Ok(_) => {
+                log::info(&format!("Folder download done: {} ({} files)", naam, bestanden.len()));
+                let waar = doel.parent().and_then(|p| p.file_name()).map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
+                zeg(&f("MeldMapKlaar", &[&naam, &waar, &bestanden.len().to_string()]), Belang::Belangrijk);
+            }
+            Err(Fout::Gestopt(_)) => {
+                log::info(&format!("Folder download cancelled: {}", naam));
+                zeg(&t("MeldMapGeannuleerd"), Belang::Belangrijk);
+            }
+            Err(e) => {
+                log::fout(&format!("Folder download failed: {}: {}", naam, e.log_tekst()));
+                zeg(&f("MeldDownloadFout", &[&e.tekst()]), Belang::Belangrijk);
+            }
+        },
     }
     if !matches!(balk(), 1000) {
         zet_balk_waarde(0);

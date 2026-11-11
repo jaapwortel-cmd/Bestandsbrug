@@ -3,7 +3,7 @@
 //! volgende start verder kunnen. (Uploads kunnen niet verder; dat kan pCloud niet bij een uploadlink.)
 
 use std::path::PathBuf;
-use std::sync::atomic::{AtomicU64, AtomicU8, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, AtomicU8, Ordering};
 use std::time::Instant;
 
 use serde::{Deserialize, Serialize};
@@ -19,6 +19,10 @@ pub struct Voortgang {
     pub begin: AtomicU64,
     stop: AtomicU8,
     pub gestart: Instant,
+    /// Bij een hele map: de bytes van de bestanden die al klaar zijn.
+    pub voor: AtomicU64,
+    /// Bij een hele map: het totaal staat vast (de som van alle bestanden).
+    pub vast_totaal: AtomicBool,
 }
 
 impl Default for Voortgang {
@@ -35,6 +39,8 @@ impl Voortgang {
             begin: AtomicU64::new(0),
             stop: AtomicU8::new(0),
             gestart: Instant::now(),
+            voor: AtomicU64::new(0),
+            vast_totaal: AtomicBool::new(false),
         }
     }
     pub fn vraag_stop(&self, s: Stop) {

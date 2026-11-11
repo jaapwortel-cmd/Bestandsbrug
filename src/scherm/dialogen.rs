@@ -117,3 +117,30 @@ pub fn open_logmap() {
         open(&map.to_string_lossy(), "");
     }
 }
+
+/// Een map kiezen (het standaardvenster van Windows), standaard Downloads. Voor het kopiëren van een hele map.
+pub fn kies_map(titel: &str) -> Option<PathBuf> {
+    use windows::Win32::System::Com::{CoCreateInstance, CoTaskMemFree, CLSCTX_INPROC_SERVER};
+    unsafe {
+        let dlg: IFileOpenDialog = CoCreateInstance(&FileOpenDialog, None, CLSCTX_INPROC_SERVER).ok()?;
+        let opties = dlg.GetOptions().ok()?;
+        let _ = dlg.SetOptions(opties | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST);
+        let t = ws(titel);
+        let _ = dlg.SetTitle(pc(&t));
+        let start = ws(&downloads_map().to_string_lossy());
+        if let Ok(item) = SHCreateItemFromParsingName::<_, _, IShellItem>(pc(&start), None) {
+            let _ = dlg.SetFolder(&item);
+        }
+        begin_vraag();
+        let ok = dlg.Show(Some(hwnd())).is_ok();
+        einde_vraag();
+        if !ok {
+            return None;
+        }
+        let item = dlg.GetResult().ok()?;
+        let p = item.GetDisplayName(SIGDN_FILESYSPATH).ok()?;
+        let s = p.to_string().unwrap_or_default();
+        CoTaskMemFree(Some(p.0 as *const _));
+        (!s.is_empty()).then(|| PathBuf::from(s))
+    }
+}

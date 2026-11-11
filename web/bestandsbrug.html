@@ -109,7 +109,7 @@ dialog::backdrop { background: rgba(0,0,0,.5); }
     <div role="tabpanel" id="paneel-down" aria-labelledby="tab-down">
       <table id="bestanden">
         <caption id="lijstnaam"></caption>
-        <thead><tr><th scope="col" data-tekst="KolomNaam"></th><th scope="col" data-tekst="KolomSoort"></th><th scope="col" data-tekst="KolomGrootte"></th><th scope="col" data-tekst="KolomDatum"></th><th scope="col" data-tekst="KolomUitleg"></th></tr></thead>
+        <thead><tr><th scope="col" data-tekst="KolomNaam"></th><th scope="col" data-tekst="KolomSoort"></th><th scope="col" data-tekst="KolomGrootte"></th><th scope="col" data-tekst="KolomDatum"></th><th scope="col" data-tekst="KolomUitleg"></th><th scope="col"><span class="verborgen-visueel" data-tekst="TabDownloaden"></span></th></tr></thead>
         <tbody></tbody>
       </table>
       <p class="zacht" data-tekst="WebDownloadUitleg"></p>
@@ -269,9 +269,10 @@ async function haalLijst(handmatig) {
     if (j.result !== 0) throw { pcloud: j };
     // Alle bestanden, ook in mappen; op het scherm komen ze als mappen met de bestanden eronder.
     const items = [];
+    mapIds = {};
     (function verzamel(m, pad) {
       for (const x of m.contents || []) {
-        if (x.isfolder) verzamel(x, pad ? pad + "/" + x.name : x.name);
+        if (x.isfolder) { const p = pad ? pad + "/" + x.name : x.name; mapIds[p] = x.folderid; verzamel(x, p); }
         else items.push({ ...x, map: pad });
       }
     })(j.metadata || {}, "");
@@ -307,6 +308,7 @@ async function haalUitleg(fileid) {
 // Zoals de Verkenner: de mappen en bestanden van één map. Enter op een map = openen, op een bestand =
 // downloaden. Backspace of de knop "Map omhoog" = naar de map erboven.
 let huidigeMap = "";
+let mapIds = {};
 function inhoudVan(pad) {
   const mappen = new Map(), bestanden = [];
   for (const b of lijst) {
@@ -330,12 +332,18 @@ function toonLijst(kiesMap) {
   const tb = document.querySelector("#bestanden tbody");
   tb.textContent = "";
   let teFocussen = null;
-  const rij = (naamEl, soort, grootteTekst, datumTekst, uitleg) => {
+  const rij = (naamEl, soort, grootteTekst, datumTekst, uitleg, naam, actie) => {
     const tr = document.createElement("tr");
     const th = document.createElement("th"); th.scope = "row"; th.appendChild(naamEl); tr.appendChild(th);
     for (const [w, k] of [[soort, ""], [grootteTekst, "getal"], [datumTekst, "getal"], [uitleg, ""]]) {
       const td = document.createElement("td"); td.textContent = w; if (k) td.className = k; tr.appendChild(td);
     }
+    const td = document.createElement("td");
+    const knop = document.createElement("button");
+    knop.className = "knop hoofd"; knop.textContent = t("KnopDownloaden");
+    knop.setAttribute("aria-label", t("KnopDownloaden") + ": " + naam);
+    knop.addEventListener("click", actie);
+    td.appendChild(knop); tr.appendChild(td);
     tb.appendChild(tr);
   };
   for (const m of mappen) {
@@ -343,14 +351,15 @@ function toonLijst(kiesMap) {
     k.className = "naamknop map"; k.textContent = m.naam; k.dataset.map = m.naam;
     k.addEventListener("click", () => openMap(huidigeMap ? huidigeMap + "/" + m.naam : m.naam));
     if (kiesMap === m.naam) teFocussen = k;
-    rij(k, t("SoortMap"), f("AantalItems", String(m.aantal)), "", "");
+    const pad = huidigeMap ? huidigeMap + "/" + m.naam : m.naam;
+    rij(k, t("SoortMap"), f("AantalItems", String(m.aantal)), "", "", m.naam, () => downloadMap(pad, m.naam));
   }
   for (const b of bestanden) {
     const k = document.createElement("button");
     k.className = "naamknop"; k.textContent = b.naam;
     k.setAttribute("aria-label", b.naam + ", " + t("KnopDownloaden"));
     k.addEventListener("click", () => download(b));
-    rij(k, t("SoortBestand"), grootte(b.grootte), datum(b.datum), b.uitleg);
+    rij(k, t("SoortBestand"), grootte(b.grootte), datum(b.datum), b.uitleg, b.naam, () => download(b));
   }
   return teFocussen || tb.querySelector("button");
 }
@@ -373,6 +382,16 @@ $("bestanden").addEventListener("keydown", (e) => {
   if (e.key === "Backspace") { e.preventDefault(); mapOmhoog(); }
 });
 $("knop-omhoog").addEventListener("click", mapOmhoog);
+
+// Een hele map: pCloud maakt er een zip-bestand van (een browser kan zelf geen mappen maken).
+function downloadMap(pad, naam) {
+  const a = document.createElement("a");
+  a.href = D.servers[0] + "/getpubzip?" + new URLSearchParams({ code: D.downloadCode, folderid: mapIds[pad], filename: naam + ".zip", forcedownload: 1 });
+  a.rel = "noopener";
+  document.body.appendChild(a); a.click(); a.remove();
+  log("INFO Folder download started in browser (zip): " + naam);
+  zeg(f("WebMapZip", naam));
+}
 
 // Downloaden gaat via de browser zelf (de downloadservers van pCloud staan geen voortgang toe vanuit een los bestand).
 async function download(b) {

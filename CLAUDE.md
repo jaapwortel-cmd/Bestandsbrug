@@ -120,6 +120,9 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
   is gemaakt voor WinForms-menu's en vindt gewone Win32-menu's niet (met F10/Alt werken ze wel; gecontroleerd met Wine).
 - Jaap zette op 11 nov de apps in submappen. 1.0.1 (12 nov, Jaaps wens): GEEN boom (dat wilde hij niet), maar zoals de
   Verkenner: de lijst toont één map (eerst mappen, dan bestanden; kolommen Naam, Soort, Grootte, Datum, Uitleg),
-  Enter opent een map, Backspace of de knop "Map omhoog" gaat terug (met de vorige map gekozen). HTML net zo. Installatiefout "Cannot focus a disabled or
+  Enter opent een map, Backspace of de knop "Map omhoog" gaat terug (met de vorige map gekozen). HTML net zo.
+  Hele map kopiëren (Jaaps wens): knop Downloaden / Ctrl+C op een map -> map kiezen (standaard Downloads) ->
+  download_map maakt de mappen en downloadt elk bestand (één voortgang; geen "later verder"). HTML: getpubzip
+  met folderid (zip, CORS ok), want een browser kan geen mappen maken. Installatiefout "Cannot focus a disabled or
   invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
 - Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).
