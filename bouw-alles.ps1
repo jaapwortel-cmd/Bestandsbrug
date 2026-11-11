@@ -19,7 +19,8 @@ if ($inst -notmatch 'pub const VERSIE: &str = "([0-9.]+)";') { throw 'Geen VERSI
 $versie = $Matches[1]
 Write-Host "Bestandsbrug versie $versie"
 $cargo = Get-Content -LiteralPath 'Cargo.toml' -Raw
-$nieuw = [regex]::Replace($cargo, '(?m)^version = "[^"]*"', "version = `"$versie`"", 1)
+# Alleen de versie van het pakket zelf (onder [package]), niet die van de onderdelen.
+$nieuw = ([regex]'(?ms)(\[package\].*?^version = ")[^"]*(")').Replace($cargo, "`${1}$versie`${2}", 1)
 if ($nieuw -ne $cargo) { [IO.File]::WriteAllText("$PSScriptRoot\Cargo.toml", $nieuw); Write-Host 'Cargo.toml: versie gelijk gezet.' }
 
 # 2. Gereedschap: Rust en Inno Setup.
