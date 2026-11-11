@@ -1,0 +1,38 @@
+UITLEG OVER {naam}
+
+1. Wat doet {naam}?
+Met {naam} kun je de apps van Jaap downloaden. Je kunt ook een bestand naar Jaap sturen (uploaden). Alles gaat via pCloud. Je hoeft je niet aan te melden.
+
+2. Een app downloaden
+Ga naar het tabblad Downloaden. Loop met de pijltjes door de lijst. Druk op Enter of kies de knop Downloaden. Kies waar je het bestand wilt opslaan. Standaard is dat de map Downloads.
+Met F5 haal je de lijst opnieuw op. Staat er een nieuwe app in de lijst, dan hoor je dat.
+
+3. Een bestand naar Jaap sturen
+Ga naar het tabblad Uploaden, met Ctrl+Tab of Ctrl+2. Kies Bestand kiezen. Kies daarna Uploaden. Je hoort "Klaar, bedankt!" als het gelukt is. Je kunt de bestanden van anderen niet zien. Alleen Jaap ziet ze.
+
+4. De voortgang
+Tijdens een download of upload hoor je elke 6 seconden hoe ver hij is. Bijvoorbeeld: Downloaden, 40 procent, nog ongeveer 20 seconden.
+
+5. Stoppen met Escape
+Druk tijdens een download of upload op Escape. Je krijgt dan drie keuzes:
+- Doorgaan: de download gaat gewoon verder.
+- Volgende keer verdergaan: de download stopt. Als je {naam} weer opent, kun je verdergaan.
+- Alles nu annuleren: alles stopt en het halve bestand wordt weggehaald.
+Een upload kan niet later verdergaan. Daar heb je alleen Doorgaan en Alles nu annuleren.
+
+6. Sneltoetsen
+- Ctrl+Tab: naar het andere tabblad. Ctrl+1: Downloaden. Ctrl+2: Uploaden.
+- Enter: het gekozen bestand downloaden.
+- F5: de lijst vernieuwen.
+- F1: deze uitleg.
+- Alt+F4: {naam} afsluiten.
+- Escape: tijdens een download of upload de vraag wat je wilt doen. In dit venster: sluiten.
+
+7. Weergave en taal
+In het menu Toegankelijkheid kies je een lichte of donkere weergave. In het menu Taal kies je Nederlands of English. {naam} onthoudt je keuze.
+
+8. Updates
+{naam} kijkt na het opstarten of er een nieuwe versie is. Is die er, dan hoor je dat. Kies dan in het menu Help de optie Controleren op updates.
+
+9. Hulp bij een probleem
+In het menu Help kun je het logbestand openen. Daarin staat wat er gebeurd is. Wil je Jaap helpen? Mail het logbestand dan naar Jaap. Het adres staat in de privacyverklaring.

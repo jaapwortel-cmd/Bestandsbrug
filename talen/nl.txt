@@ -1,0 +1,179 @@
+# Nederlandse teksten van Bestandsbrug. Vorm: sleutel = tekst
+# {naam} wordt de naam van de app (AppNaam hieronder). {0} en {1} worden ingevuld door de app.
+# \n is een nieuwe regel. Een & in een menu of knop maakt de letter erna onderstreept (sneltoets met Alt).
+# Nieuwe tekst? Zet hem ook in en.txt, met dezelfde sleutel. Een test controleert dat.
+
+AppNaam = Bestandsbrug
+TaalNaam = Nederlands
+
+# Menu's
+MenuBestand = &Bestand
+MenuDownloaden = &Downloaden\tEnter
+MenuUploadKiezen = Bestand &kiezen om te uploaden...
+MenuUploaden = &Uploaden
+MenuVernieuwen = Lijst &vernieuwen\tF5
+MenuNaarDownload = Naar het tabblad D&ownloaden\tCtrl+1
+MenuNaarUpload = Naar het tabblad U&ploaden\tCtrl+2
+MenuAfsluiten = &Afsluiten\tAlt+F4
+MenuTaal = &Taal
+MenuNederlands = &Nederlands
+MenuEngels = &English (Engels)
+MenuToegankelijkheid = T&oegankelijkheid
+MenuLicht = &Lichte weergave
+MenuDonker = &Donkere weergave
+MenuHelp = &Help
+MenuUitleg = &Uitleg\tF1
+MenuUpdates = &Controleren op updates
+MenuPrivacy = &Privacyverklaring
+MenuLogOpenen = &Logbestand openen
+MenuLogMap = &Map met logbestand openen
+MenuOver = &Over {naam}
+
+# Tabbladen en knoppen
+TabDownloaden = Downloaden
+TabUploaden = Uploaden
+LijstNaam = Bestanden die je kunt downloaden
+KolomNaam = Naam
+KolomGrootte = Grootte
+KolomDatum = Datum
+KolomUitleg = Uitleg
+KnopDownloaden = &Downloaden
+KnopVernieuwen = Lijst &vernieuwen
+UploadUitlegNaam = Uitleg over uploaden
+UploadUitleg = Hier kun je een bestand naar Jaap sturen. Kies eerst een bestand. Kies daarna Uploaden.\nJe kunt de bestanden van anderen niet zien. Alleen Jaap ziet ze.
+KnopKiezen = Bestand &kiezen
+KnopUploaden = &Uploaden
+GekozenNaam = Gekozen bestand
+GeenBestand = Nog geen bestand gekozen.
+VoortgangNaam = Voortgang
+MeldingNaam = Melding
+KnopSluiten = &Sluiten
+Ja = Ja
+Nee = Nee
+Later = Later
+
+# Lijst
+LijstLaden = De lijst wordt opgehaald.
+LijstGeladen = De lijst is opgehaald. Er staan {0} bestanden in.
+LijstEenBestand = De lijst is opgehaald. Er staat 1 bestand in.
+LijstLeeg = Er staan nu geen bestanden in de lijst.
+LijstNieuw = De lijst is bijgewerkt. Nieuw: {0}.
+LijstAnders = De lijst is bijgewerkt.
+LijstOud = Dit is de lijst van de vorige keer. De nieuwe lijst wordt opgehaald.
+
+# Fouten in gewone taal
+FoutGeenInternet = Er is geen verbinding met internet. Controleer je internet en probeer het opnieuw.
+FoutTeLang = pCloud antwoordt niet op tijd. Probeer het later opnieuw.
+FoutLijst = De lijst kon niet worden opgehaald. {0}
+FoutPcloud = pCloud geeft een fout: {0}
+FoutLinkWeg = De link van Jaap werkt niet meer. Mail Jaap, dan maakt hij een nieuwe.
+FoutUploadVol = De uploadmap van Jaap is vol. Je kunt nu geen bestand sturen. Mail Jaap.
+FoutTeGroot = Dit bestand is te groot. Er mag nog {0} worden gestuurd. Dit bestand is {1}.
+FoutOpslaan = Het bestand kon niet worden opgeslagen. {0}
+FoutLezen = Het bestand kon niet worden gelezen. {0}
+FoutOnvolledig = De download is niet compleet. Probeer het opnieuw.
+FoutOnbekend = Er ging iets mis: {0}
+GeenKeuze = Kies eerst een bestand in de lijst.
+GeenUploadKeuze = Kies eerst een bestand met de knop Bestand kiezen.
+AlBezig = Er loopt al een download of upload. Wacht tot die klaar is.
+LeegBestand = Dit bestand is leeg. Kies een ander bestand.
+
+# Meldingen tijdens een download of upload
+MeldDownloadStart = Downloaden gestart: {0}.
+MeldUploadStart = Uploaden gestart: {0}.
+MeldDownloadVoortgang = Downloaden, {0} procent
+MeldUploadVoortgang = Uploaden, {0} procent
+MeldNogSeconden = , nog ongeveer {0} seconden
+MeldNogMinuut = , nog ongeveer 1 minuut
+MeldNogMinuten = , nog ongeveer {0} minuten
+MeldDownloadKlaar = Klaar. {0} is opgeslagen in de map {1}.
+MeldUploadKlaar = Klaar, bedankt! {0} is naar Jaap gestuurd.
+MeldDownloadFout = De download is mislukt. {0}
+MeldUploadFout = De upload is mislukt. {0}
+MeldGepauzeerd = De download is gestopt. Als je {naam} weer opent, kun je verdergaan.
+MeldDownloadGeannuleerd = De download is geannuleerd. Het halve bestand is weggehaald.
+MeldUploadGeannuleerd = De upload is geannuleerd.
+MeldVerder = De overdracht gaat verder.
+MeldVerderDownload = Verder met downloaden: {0}.
+
+# Vragen
+OpslaanTitel = Waar wil je {0} opslaan?
+Overschrijven = Het bestand {0} bestaat al. Wil je het vervangen?
+UploadKiezenTitel = Kies het bestand dat je naar Jaap wilt sturen
+FilterAlles = Alle bestanden
+EscVraagDownload = Wat wil je doen met de download van {0}?
+EscVraagUpload = Wat wil je doen met de upload van {0}?
+EscDoorgaan = Doorgaan
+EscLater = Volgende keer verdergaan
+EscAnnuleren = Alles nu annuleren
+EscUploadUitleg = Een upload kan niet later verdergaan. pCloud kan dat niet bij een uploadlink. Je kunt doorgaan of alles annuleren.
+AfsluitenVraag = Weet je zeker dat je {naam} wilt afsluiten?
+AfsluitenTijdensOverdracht = Let op: er loopt nog een download of upload van {0}. Als je {naam} afsluit, stopt die. Wat wil je doen?
+OnderbrokenVraag = Er is een download die niet af is: {0} ({1} procent). Wil je nu verdergaan?
+OnderbrokenJa = Ja, verdergaan
+OnderbrokenWeg = Nee, weggooien
+OnderbrokenWeg2 = De halve download van {0} is weggehaald.
+OnderbrokenNietMeer = {0} staat niet meer in de lijst of is veranderd. De halve download is weggehaald.
+
+# Weergave en taal
+WeergaveLicht = Lichte weergave is nu gekozen.
+WeergaveDonker = Donkere weergave is nu gekozen.
+TaalGekozen = De taal is nu Nederlands.
+
+# Updates
+UpdateTitel = Controleren op updates
+UpdateZoeken = Ik kijk of er een nieuwe versie is.
+UpdateNieuwste = Je hebt de nieuwste versie ({0}).
+UpdateNieuw = Er is een nieuwe versie ({0}). Je hebt nu versie {1}.\n\nWat is nieuw:\n{2}
+UpdateNuUpdaten = Nu updaten
+UpdateGeenInternet = Er is geen verbinding met internet. Je kunt nu niet kijken of er een nieuwe versie is.
+UpdateFout = Het kijken naar een nieuwe versie is niet gelukt. {0}
+UpdateMelding = Er is een nieuwe versie van {naam}. Kies in het menu Help de optie Controleren op updates.
+UpdateWacht = Wacht tot de download of upload klaar is. Daarna kun je kijken of er een nieuwe versie is.
+UpdateNaam = de nieuwe versie van {naam}
+UpdateBeschadigd = De nieuwe versie is beschadigd of niet compleet. Er is niets geïnstalleerd. Probeer het later opnieuw.
+UpdateAfsluitenVraag = De nieuwe versie is klaar. Mag {naam} nu afsluiten om hem te installeren? Daarna start {naam} vanzelf weer.
+UpdateStart = De installatie begint. {naam} sluit nu af.
+UpdateStartFout = Het installatiebestand kon niet worden gestart. {0}
+UpdateGeenNieuwe = Er staat nog geen nieuwe versie klaar.
+
+# Help
+UitlegTitel = Uitleg over {naam}
+PrivacyTitel = Privacyverklaring
+OverTitel = Over {naam}
+OverTekst = {naam}\nVersie {0}\nGemaakt door Jaap Wortel.\nApps van Jaap downloaden en bestanden naar Jaap sturen, via pCloud.
+OverPrivacy = &Privacyverklaring
+LogNietGevonden = Er is nog geen logbestand.
+LogOpenFout = Het logbestand kon niet worden geopend. {0}
+
+# Maanden (voor de datum in de lijst)
+Maand1 = januari
+Maand2 = februari
+Maand3 = maart
+Maand4 = april
+Maand5 = mei
+Maand6 = juni
+Maand7 = juli
+Maand8 = augustus
+Maand9 = september
+Maand10 = oktober
+Maand11 = november
+Maand12 = december
+DatumVorm = {d} {maand} {jaar}, {uur}:{min}
+Decimaalteken = ,
+
+# Alleen voor Bestandsbrug.html (de versie voor de browser)
+WebHoofdmenu = Hoofdmenu
+WebDownloadGestart = De download van {0} is begonnen. Je browser laat zien wanneer hij klaar is. Je vindt het bestand meestal in de map Downloads.
+WebDownloadUitleg = In de browser laat je browser zelf de voortgang van een download zien. Uploaden laat de voortgang hier zien.
+WebHelpPagina = Help
+WebLogboek = Logboek
+WebLogboekUitleg = Hier staat wat er gebeurd is. Wil je Jaap helpen bij een probleem? Kopieer het logboek en mail het naar Jaap.
+WebKopieer = Logboek &kopiëren
+WebGekopieerd = Het logboek is gekopieerd.
+WebNietGekopieerd = Kopiëren lukt niet. Selecteer de tekst in het logboek en kopieer hem zelf met Ctrl+C.
+WebVersie = Versie {0}
+WebTerug = &Terug
+WebPrivacyNl = Privacyverklaring (Nederlands)
+WebPrivacyEn = Privacy statement (English)
+WebGeenVerbindingBestand = Je browser laat {naam} niet met pCloud praten. Gebruik een andere browser, of de Windows-app.

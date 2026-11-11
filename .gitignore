@@ -1,0 +1,25 @@
+# Bouwmappen en opleveringen
+/target/
+/oplevering/
+/installatiemap/
+*.exe
+*.msi
+*.zip
+# Logbestanden en tijdelijke bestanden
+*.log
+*.tmp
+*.deel
+*.bak
+*~
+# Instellingen van je eigen computer en editors
+.vs/
+.vscode/
+.idea/
+*.user
+Thumbs.db
+desktop.ini
+.DS_Store
+# Uitkomsten van proeven
+toegankelijkheid.txt
+scherm-*.png
+meting*.txt

@@ -1,0 +1,179 @@
+# English texts of Bestandsbrug (Filebridge). Form: key = text
+# {naam} becomes the name of the app (AppNaam below). {0} and {1} are filled in by the app.
+# \n is a new line. An & in a menu or button underlines the next letter (shortcut with Alt).
+# New text? Also put it in nl.txt, with the same key. A test checks this.
+
+AppNaam = Filebridge
+TaalNaam = English
+
+# Menus
+MenuBestand = &File
+MenuDownloaden = &Download\tEnter
+MenuUploadKiezen = &Choose a file to upload...
+MenuUploaden = &Upload
+MenuVernieuwen = &Refresh list\tF5
+MenuNaarDownload = Go to the &Download tab\tCtrl+1
+MenuNaarUpload = Go to the &Upload tab\tCtrl+2
+MenuAfsluiten = E&xit\tAlt+F4
+MenuTaal = &Language
+MenuNederlands = &Nederlands (Dutch)
+MenuEngels = &English
+MenuToegankelijkheid = &Accessibility
+MenuLicht = &Light view
+MenuDonker = &Dark view
+MenuHelp = &Help
+MenuUitleg = &Instructions\tF1
+MenuUpdates = &Check for updates
+MenuPrivacy = &Privacy statement
+MenuLogOpenen = Open &log file
+MenuLogMap = Open log &folder
+MenuOver = &About {naam}
+
+# Tabs and buttons
+TabDownloaden = Download
+TabUploaden = Upload
+LijstNaam = Files you can download
+KolomNaam = Name
+KolomGrootte = Size
+KolomDatum = Date
+KolomUitleg = Description
+KnopDownloaden = &Download
+KnopVernieuwen = &Refresh list
+UploadUitlegNaam = About uploading
+UploadUitleg = Here you can send a file to Jaap. First choose a file. Then choose Upload.\nYou cannot see files from other people. Only Jaap can see them.
+KnopKiezen = &Choose file
+KnopUploaden = &Upload
+GekozenNaam = Chosen file
+GeenBestand = No file chosen yet.
+VoortgangNaam = Progress
+MeldingNaam = Message
+KnopSluiten = &Close
+Ja = Yes
+Nee = No
+Later = Later
+
+# List
+LijstLaden = Getting the list.
+LijstGeladen = The list is ready. It has {0} files.
+LijstEenBestand = The list is ready. It has 1 file.
+LijstLeeg = There are no files in the list right now.
+LijstNieuw = The list has been updated. New: {0}.
+LijstAnders = The list has been updated.
+LijstOud = This is the list from last time. Getting the new list.
+
+# Errors in plain language
+FoutGeenInternet = There is no internet connection. Check your internet and try again.
+FoutTeLang = pCloud does not answer in time. Please try again later.
+FoutLijst = Could not get the list. {0}
+FoutPcloud = pCloud gives an error: {0}
+FoutLinkWeg = Jaap's link does not work anymore. Email Jaap, and he will make a new one.
+FoutUploadVol = Jaap's upload folder is full. You cannot send a file right now. Email Jaap.
+FoutTeGroot = This file is too big. You can still send {0}. This file is {1}.
+FoutOpslaan = Could not save the file. {0}
+FoutLezen = Could not read the file. {0}
+FoutOnvolledig = The download is not complete. Please try again.
+FoutOnbekend = Something went wrong: {0}
+GeenKeuze = First choose a file in the list.
+GeenUploadKeuze = First choose a file with the Choose file button.
+AlBezig = A download or upload is already running. Wait until it is done.
+LeegBestand = This file is empty. Choose another file.
+
+# Messages during a download or upload
+MeldDownloadStart = Download started: {0}.
+MeldUploadStart = Upload started: {0}.
+MeldDownloadVoortgang = Downloading, {0} percent
+MeldUploadVoortgang = Uploading, {0} percent
+MeldNogSeconden = , about {0} seconds left
+MeldNogMinuut = , about 1 minute left
+MeldNogMinuten = , about {0} minutes left
+MeldDownloadKlaar = Done. {0} is saved in the folder {1}.
+MeldUploadKlaar = Done, thank you! {0} has been sent to Jaap.
+MeldDownloadFout = The download failed. {0}
+MeldUploadFout = The upload failed. {0}
+MeldGepauzeerd = The download has stopped. When you open {naam} again, you can continue.
+MeldDownloadGeannuleerd = The download is cancelled. The half file has been removed.
+MeldUploadGeannuleerd = The upload is cancelled.
+MeldVerder = The transfer continues.
+MeldVerderDownload = Continuing the download: {0}.
+
+# Questions
+OpslaanTitel = Where do you want to save {0}?
+Overschrijven = The file {0} already exists. Do you want to replace it?
+UploadKiezenTitel = Choose the file you want to send to Jaap
+FilterAlles = All files
+EscVraagDownload = What do you want to do with the download of {0}?
+EscVraagUpload = What do you want to do with the upload of {0}?
+EscDoorgaan = Continue
+EscLater = Continue next time
+EscAnnuleren = Cancel everything now
+EscUploadUitleg = An upload cannot continue later. pCloud cannot do that with an upload link. You can continue or cancel everything.
+AfsluitenVraag = Are you sure you want to quit {naam}?
+AfsluitenTijdensOverdracht = Warning: a download or upload of {0} is still running. If you quit {naam}, it stops. What do you want to do?
+OnderbrokenVraag = There is a download that is not finished: {0} ({1} percent). Do you want to continue now?
+OnderbrokenJa = Yes, continue
+OnderbrokenWeg = No, throw it away
+OnderbrokenWeg2 = The half download of {0} has been removed.
+OnderbrokenNietMeer = {0} is no longer in the list or has changed. The half download has been removed.
+
+# View and language
+WeergaveLicht = Light view is now chosen.
+WeergaveDonker = Dark view is now chosen.
+TaalGekozen = The language is now English.
+
+# Updates
+UpdateTitel = Check for updates
+UpdateZoeken = Checking if there is a new version.
+UpdateNieuwste = You have the newest version ({0}).
+UpdateNieuw = There is a new version ({0}). You now have version {1}.\n\nWhat is new:\n{2}
+UpdateNuUpdaten = Update now
+UpdateGeenInternet = There is no internet connection. You cannot check for a new version right now.
+UpdateFout = Checking for a new version did not work. {0}
+UpdateMelding = There is a new version of {naam}. Choose Check for updates in the Help menu.
+UpdateWacht = Wait until the download or upload is done. Then you can check for a new version.
+UpdateNaam = the new version of {naam}
+UpdateBeschadigd = The new version is damaged or not complete. Nothing has been installed. Please try again later.
+UpdateAfsluitenVraag = The new version is ready. May {naam} close now to install it? After that, {naam} starts again by itself.
+UpdateStart = The installation starts. {naam} closes now.
+UpdateStartFout = Could not start the installer. {0}
+UpdateGeenNieuwe = There is no new version ready yet.
+
+# Help
+UitlegTitel = Instructions for {naam}
+PrivacyTitel = Privacy statement
+OverTitel = About {naam}
+OverTekst = {naam}\nVersion {0}\nMade by Jaap Wortel.\nDownload Jaap's apps and send files to Jaap, via pCloud.
+OverPrivacy = &Privacy statement
+LogNietGevonden = There is no log file yet.
+LogOpenFout = Could not open the log file. {0}
+
+# Months (for the date in the list)
+Maand1 = January
+Maand2 = February
+Maand3 = March
+Maand4 = April
+Maand5 = May
+Maand6 = June
+Maand7 = July
+Maand8 = August
+Maand9 = September
+Maand10 = October
+Maand11 = November
+Maand12 = December
+DatumVorm = {d} {maand} {jaar}, {uur}:{min}
+Decimaalteken = .
+
+# Only for Bestandsbrug.html (the browser version)
+WebHoofdmenu = Main menu
+WebDownloadGestart = The download of {0} has started. Your browser shows when it is done. You usually find the file in the Downloads folder.
+WebDownloadUitleg = In the browser, your browser shows the progress of a download itself. Uploading shows the progress here.
+WebHelpPagina = Help
+WebLogboek = Log
+WebLogboekUitleg = This shows what happened. Do you want to help Jaap with a problem? Copy the log and email it to Jaap.
+WebKopieer = &Copy log
+WebGekopieerd = The log has been copied.
+WebNietGekopieerd = Copying does not work. Select the text in the log and copy it yourself with Ctrl+C.
+WebVersie = Version {0}
+WebTerug = &Back
+WebPrivacyNl = Privacyverklaring (Nederlands)
+WebPrivacyEn = Privacy statement (English)
+WebGeenVerbindingBestand = Your browser does not let {naam} talk to pCloud. Use another browser, or the Windows app.

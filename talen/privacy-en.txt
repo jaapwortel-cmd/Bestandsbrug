@@ -1,0 +1,35 @@
+PRIVACY STATEMENT FILEBRIDGE
+Last updated: 11 November 2026
+
+1. Who am I?
+I am Jaap Wortel. I made the app Filebridge. I am blind, and I make programs that also work well with a screen reader. I want everyone to be able to use my apps easily.
+
+2. What is Filebridge for?
+With Filebridge you can download my apps. You can also send me a file yourself (upload).
+
+3. What data do I collect?
+I do not collect data about you. The app has no sign-in, no cookies, no ads and no tracking. I do not know who uses the app, and I do not know how often.
+There are two small exceptions:
+- If you upload a file, it goes to my pCloud. Only I can see it. I only use it for the reason you sent it.
+- If you email me, I get your email address and your message. I only use them to reply to you.
+
+4. What stays on your own computer?
+Your choices (language and light or dark view), an interrupted download or upload, and the log file stay on your own computer. In the single HTML version, your choices stay in your own browser. I do not receive any of this automatically. I do not send the log file to myself. Do you want to help me with a problem? Then you can email the log file yourself. The log file contains no passwords and no personal data.
+
+5. Other companies
+I do not have my own server. Filebridge connects to pCloud (to download and upload) and to Dropbox (to check whether there is a new version). These companies can see technical data, such as your IP address. I have no control over that. Please also read their privacy statements.
+
+6. Email and questions
+Do you have a question about the app or about privacy? Email me at jaap.wortel@gmail.com. I will answer within two working days. I only use your email address to reply to you. Do you want me to delete your email because of your privacy? Tell me, and I will delete it. This also applies to a file you have uploaded.
+
+7. Your rights
+You can ask me what data I have about you. You can ask me to correct or delete it. You can also ask me to stop using it. Email me to do this. Are you not satisfied? Then you can file a complaint with the Dutch Data Protection Authority, the Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).
+
+8. How long do I keep data?
+I do not keep your email or your file longer than necessary. If you ask me to delete it, I will.
+
+9. Responsibility
+I made Filebridge to help others. You use the app at your own risk. For the rest, I am not responsible for how the app is used, as far as the law allows. This also applies to damage from a download, an upload or an update. Do not send files that are forbidden or that can cause harm. I may delete such files.
+
+10. Changes
+I may change this statement. The newest version is in the app, under Help. The date is at the top.

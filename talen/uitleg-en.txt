@@ -1,0 +1,38 @@
+INSTRUCTIONS FOR {naam}
+
+1. What does {naam} do?
+With {naam} you can download Jaap's apps. You can also send a file to Jaap (upload). Everything goes through pCloud. You do not need to sign in.
+
+2. Download an app
+Go to the Download tab. Use the arrow keys to move through the list. Press Enter or choose the Download button. Choose where you want to save the file. By default this is the Downloads folder.
+Press F5 to get the list again. If there is a new app in the list, you will hear it.
+
+3. Send a file to Jaap
+Go to the Upload tab, with Ctrl+Tab or Ctrl+2. Choose Choose file. Then choose Upload. You hear "Done, thank you!" when it worked. You cannot see files from other people. Only Jaap can see them.
+
+4. The progress
+During a download or upload, you hear every 6 seconds how far it is. For example: Downloading, 40 percent, about 20 seconds left.
+
+5. Stop with Escape
+Press Escape during a download or upload. You then get three choices:
+- Continue: the download just goes on.
+- Continue next time: the download stops. When you open {naam} again, you can continue.
+- Cancel everything now: everything stops and the half file is removed.
+An upload cannot continue later. There you only have Continue and Cancel everything now.
+
+6. Shortcut keys
+- Ctrl+Tab: go to the other tab. Ctrl+1: Download. Ctrl+2: Upload.
+- Enter: download the chosen file.
+- F5: refresh the list.
+- F1: these instructions.
+- Alt+F4: quit {naam}.
+- Escape: during a download or upload, the question what you want to do. In this window: close.
+
+7. View and language
+In the Accessibility menu you choose a light or dark view. In the Language menu you choose Nederlands or English. {naam} remembers your choice.
+
+8. Updates
+After starting, {naam} checks if there is a new version. If there is one, you will hear it. Then choose Check for updates in the Help menu.
+
+9. Help with a problem
+In the Help menu you can open the log file. It shows what happened. Do you want to help Jaap? Then email the log file to Jaap. The address is in the privacy statement.

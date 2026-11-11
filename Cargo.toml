@@ -1,0 +1,63 @@
+[package]
+name = "bestandsbrug"
+# Het versienummer staat in src/instellingen.rs (VERSIE). bouw-alles.ps1 zet het hier gelijk;
+# een test controleert dat ze hetzelfde zijn.
+version = "1.0.0"
+edition = "2021"
+description = "Bestandsbrug / Filebridge: apps downloaden en bestanden uploaden via pCloud"
+publish = false
+build = "build.rs"
+default-run = "bestandsbrug"
+
+[lib]
+name = "bestandsbrug"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bestandsbrug"
+path = "src/main.rs"
+
+[[bin]]
+name = "maak-html"
+path = "src/bin/maak_html.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ureq = { version = "3.1", default-features = false, features = ["rustls", "platform-verifier", "json", "win-system-proxy"] }
+sha2 = "0.10"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+
+[target.'cfg(windows)'.dependencies.windows]
+version = "0.62"
+features = [
+  "Win32_Foundation",
+  "Win32_Globalization",
+  "Win32_Graphics_Dwm",
+  "Win32_Graphics_Gdi",
+  "Win32_System_Com",
+  "Win32_System_LibraryLoader",
+  "Win32_System_Ole",
+  "Win32_System_Registry",
+  "Win32_System_SystemInformation",
+  "Win32_System_Threading",
+  "Win32_System_Time",
+  "Win32_System_Variant",
+  "Win32_UI_Accessibility",
+  "Win32_UI_Controls",
+  "Win32_UI_Controls_Dialogs",
+  "Win32_UI_HiDpi",
+  "Win32_UI_Input_KeyboardAndMouse",
+  "Win32_UI_Shell",
+  "Win32_UI_WindowsAndMessaging",
+]
+
+[target.'cfg(windows)'.build-dependencies]
+embed-resource = "3"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

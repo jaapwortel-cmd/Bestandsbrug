@@ -1,0 +1,35 @@
+PRIVACYVERKLARING BESTANDSBRUG
+Laatst bijgewerkt: 11 november 2026
+
+1. Wie ben ik?
+Ik ben Jaap Wortel. Ik heb de app Bestandsbrug gemaakt. Ik ben blind en maak programma's die ook goed werken met een schermlezer. Ik wil dat iedereen mijn apps makkelijk kan gebruiken.
+
+2. Waarvoor is Bestandsbrug?
+Met Bestandsbrug kun je mijn apps downloaden. Je kunt ook zelf een bestand naar mij sturen (uploaden).
+
+3. Welke gegevens verzamel ik?
+Ik verzamel geen gegevens over jou. De app heeft geen aanmelding, geen cookies, geen reclame en geen volgprogramma's. Ik weet niet wie de app gebruikt en ook niet hoe vaak.
+Er zijn twee kleine uitzonderingen:
+- Als je een bestand uploadt, komt dat bestand in mijn pCloud. Alleen ik kan het zien. Ik gebruik het alleen voor het doel waarvoor je het hebt gestuurd.
+- Als je mij mailt, krijg ik je e-mailadres en je bericht. Ik gebruik die alleen om je te antwoorden.
+
+4. Wat blijft op je eigen computer?
+Je keuzes (taal en lichte of donkere weergave), een onderbroken download of upload en het logbestand blijven op je eigen computer. In de losse HTML-versie blijven je keuzes in je eigen browser. Ik krijg dit niet automatisch. Het logbestand stuur ik niet naar mezelf. Wil je mij helpen bij een probleem? Dan kun je het logbestand zelf mailen. In het logbestand staan geen wachtwoorden en geen persoonlijke gegevens.
+
+5. Andere bedrijven
+Ik heb geen eigen server. Bestandsbrug maakt verbinding met pCloud (om te downloaden en te uploaden) en met Dropbox (om te kijken of er een nieuwe versie is). Deze bedrijven kunnen technische gegevens zien, zoals je IP-adres. Daar heb ik geen invloed op. Lees ook hun privacyverklaringen.
+
+6. Mailen en vragen
+Heb je een vraag over de app of over privacy? Mail me dan op jaap.wortel@gmail.com. Ik antwoord binnen twee werkdagen. Ik gebruik je e-mailadres alleen om je te antwoorden. Wil je dat ik je mail weggooi vanwege je privacy? Zeg het mij, dan verwijder ik hem. Dat geldt ook voor een bestand dat je hebt geüpload.
+
+7. Jouw rechten
+Je mag mij vragen welke gegevens ik van je heb. Je mag vragen om ze te verbeteren of te verwijderen. Je mag ook vragen om ze niet meer te gebruiken. Mail mij daarvoor. Ben je niet tevreden? Dan kun je een klacht indienen bij de Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).
+
+8. Hoe lang bewaar ik gegevens?
+Ik bewaar je mail of je bestand niet langer dan nodig is. Vraag je om verwijdering, dan doe ik dat.
+
+9. Verantwoordelijkheid
+Ik heb Bestandsbrug gemaakt om anderen te helpen. Je gebruikt de app op eigen risico. Ik ben voor de rest niet verantwoordelijk voor het gebruik van de app, voor zover de wet dat toestaat. Dat geldt ook voor schade door een download, een upload of een update. Stuur geen bestanden die verboden zijn of schade kunnen doen. Ik mag zulke bestanden weggooien.
+
+10. Wijzigingen
+Ik kan deze verklaring aanpassen. De nieuwste versie staat in de app, onder Help. Bovenaan staat de datum.
