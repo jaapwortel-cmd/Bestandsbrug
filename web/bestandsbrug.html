@@ -1,0 +1,544 @@
+<!doctype html>
+<!-- Bron van Bestandsbrug.html. Niet zelf invullen: "cargo run --bin maak-html" (of bouw-alles.ps1) zet de
+     teksten, kleuren, privacyverklaring, versie en de twee openbare pCloud-codes erin. -->
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITEL__</title>
+<style>
+:root { /*__LICHT__*/ color-scheme: light; }
+:root[data-weergave="donker"] { /*__DONKER__*/ color-scheme: dark; }
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body { margin: 0; background: var(--achtergrond); color: var(--tekst); font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; font-size: 1.125rem; line-height: 1.5; }
+.kop { background: var(--kop); color: var(--op-kop); display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.25rem; }
+.kop svg { width: 2.4rem; height: 2.4rem; flex: none; }
+.kop h1 { margin: 0; font-size: 2rem; font-weight: 700; }
+nav { background: var(--kaart); border-bottom: 1px solid var(--rand); padding: 0.25rem 1rem; }
+[role="menubar"] { display: flex; flex-wrap: wrap; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+[role="menubar"] > li { position: relative; }
+[role="menu"] { position: absolute; z-index: 10; left: 0; top: 100%; min-width: 16rem; list-style: none; margin: 0.2rem 0 0; padding: 0.3rem; background: var(--kaart); border: 2px solid var(--rand); border-radius: 0.6rem; box-shadow: 0 0.4rem 1.2rem rgba(0,0,0,.25); }
+[role="menu"][hidden] { display: none; }
+.menuknop { font: inherit; color: var(--tekst); background: transparent; border: 2px solid transparent; border-radius: 0.5rem; padding: 0.35rem 0.8rem; cursor: pointer; width: 100%; text-align: left; white-space: nowrap; }
+.menuknop:hover, .menuknop[aria-expanded="true"] { background: var(--achtergrond); }
+[role="menuitemradio"]::before { content: ""; display: inline-block; width: 1.4em; }
+[role="menuitemradio"][aria-checked="true"]::before { content: "\2713"; font-weight: 700; }
+main { max-width: 64rem; margin: 0 auto; padding: 1rem; display: grid; gap: 1rem; }
+.kaart { background: var(--kaart); border: 1px solid var(--rand); border-radius: 1rem; padding: 1rem 1.25rem; }
+[role="tablist"] { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.8rem; }
+[role="tab"] { font: inherit; font-weight: 600; border-radius: 999px; padding: 0.45rem 1.4rem; border: 2px solid var(--rand); background: var(--kaart); color: var(--tekst); cursor: pointer; }
+[role="tab"][aria-selected="true"] { background: var(--accent); color: var(--op-accent); border-color: var(--accent); }
+table { width: 100%; border-collapse: collapse; }
+caption { text-align: left; font-weight: 600; color: var(--zacht); padding-bottom: 0.4rem; }
+th, td { text-align: left; padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--rand); vertical-align: middle; }
+thead th { font-weight: 700; background: var(--achtergrond); }
+tbody th { font-weight: 600; }
+td.getal { white-space: nowrap; }
+.knop { font: inherit; font-weight: 600; border-radius: 999px; padding: 0.5rem 1.4rem; border: 2px solid var(--rand); background: var(--kaart); color: var(--tekst); cursor: pointer; }
+.knop.hoofd { background: var(--accent); color: var(--op-accent); border-color: var(--accent); }
+.knop:active { background: var(--achtergrond); }
+.knop.hoofd:active { background: var(--accent-ingedrukt); }
+.rij { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin-top: 0.8rem; }
+label { display: block; font-weight: 600; color: var(--zacht); margin-top: 0.8rem; }
+input[type="file"] { font: inherit; color: var(--tekst); margin-top: 0.3rem; max-width: 100%; }
+.zacht { color: var(--zacht); }
+#balk { position: relative; height: 1.6rem; border: 1px solid var(--rand); border-radius: 999px; background: var(--achtergrond); overflow: hidden; margin: 0.3rem 0 0.8rem; }
+#balk .vulling { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--accent); border-radius: 999px; transition: width .2s linear; }
+#balk .pct { position: relative; display: block; text-align: center; font-weight: 600; font-size: 0.95rem; line-height: 1.6rem; color: var(--tekst); }
+#balk.vol .pct { color: var(--op-accent); }
+#melding { min-height: 3em; white-space: pre-wrap; }
+h2 { font-size: 1.3rem; margin: 0.2rem 0 0.4rem; }
+h3 { font-size: 1.15rem; margin: 1.2rem 0 0.4rem; }
+h4 { font-size: 1.05rem; margin: 1rem 0 0.2rem; }
+#help p, #help li { max-width: 60rem; }
+textarea { width: 100%; font: 0.95rem/1.4 Consolas, "Courier New", monospace; color: var(--tekst); background: var(--achtergrond); border: 1px solid var(--rand); border-radius: 0.5rem; padding: 0.5rem; }
+dialog { background: var(--kaart); color: var(--tekst); border: 2px solid var(--rand); border-radius: 1rem; padding: 1.25rem; max-width: 34rem; }
+dialog::backdrop { background: rgba(0,0,0,.5); }
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.verborgen-visueel { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (forced-colors: active) {
+  .kop, nav, .kaart, [role="tab"], .knop, #balk, [role="menu"], dialog { border: 1px solid CanvasText; }
+  [role="tab"][aria-selected="true"], .knop.hoofd, #balk .vulling { background: Highlight; color: HighlightText; forced-color-adjust: none; }
+  :focus-visible { outline: 3px solid Highlight; }
+}
+</style>
+</head>
+<body>
+<header class="kop">
+  <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect x="2" y="2" width="60" height="60" rx="14" fill="#1468c8"/><path d="M20 12v14m-6-6l6 7 6-7M44 30V16m-6 6l6-7 6 7" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="9" y="38" width="46" height="4" rx="2" fill="#fff"/><path d="M15 50c4-9 30-9 34 0" stroke="#fff" stroke-width="3" fill="none"/><path d="M18 42v12M32 42v12M46 42v12" stroke="#fff" stroke-width="3"/></svg>
+  <h1 id="appnaam">__TITEL__</h1>
+</header>
+<nav id="menu" aria-label="Menu">
+  <ul role="menubar" id="menubalk">
+    <li role="none"><button class="menuknop" role="menuitem" aria-haspopup="menu" aria-expanded="false" id="m-bestand" data-tekst="MenuBestand" tabindex="0"></button>
+      <ul role="menu" aria-labelledby="m-bestand" hidden>
+        <li role="none"><button class="menuknop" role="menuitem" tabindex="-1" data-actie="vernieuwen" data-tekst="MenuVernieuwen"></button></li>
+        <li role="none"><button class="menuknop" role="menuitem" tabindex="-1" data-actie="naar-download" data-tekst="MenuNaarDownload"></button></li>
+        <li role="none"><button class="menuknop" role="menuitem" tabindex="-1" data-actie="naar-upload" data-tekst="MenuNaarUpload"></button></li>
+      </ul></li>
+    <li role="none"><button class="menuknop" role="menuitem" aria-haspopup="menu" aria-expanded="false" id="m-taal" data-tekst="MenuTaal" tabindex="-1"></button>
+      <ul role="menu" aria-labelledby="m-taal" hidden>
+        <li role="none"><button class="menuknop" role="menuitemradio" tabindex="-1" data-actie="taal-nl" data-tekst="MenuNederlands" lang="nl"></button></li>
+        <li role="none"><button class="menuknop" role="menuitemradio" tabindex="-1" data-actie="taal-en" data-tekst="MenuEngels" lang="en"></button></li>
+      </ul></li>
+    <li role="none"><button class="menuknop" role="menuitem" aria-haspopup="menu" aria-expanded="false" id="m-toeg" data-tekst="MenuToegankelijkheid" tabindex="-1"></button>
+      <ul role="menu" aria-labelledby="m-toeg" hidden>
+        <li role="none"><button class="menuknop" role="menuitemradio" tabindex="-1" data-actie="licht" data-tekst="MenuLicht"></button></li>
+        <li role="none"><button class="menuknop" role="menuitemradio" tabindex="-1" data-actie="donker" data-tekst="MenuDonker"></button></li>
+      </ul></li>
+    <li role="none"><button class="menuknop" role="menuitem" aria-haspopup="menu" aria-expanded="false" id="m-help" data-tekst="MenuHelp" tabindex="-1"></button>
+      <ul role="menu" aria-labelledby="m-help" hidden>
+        <li role="none"><button class="menuknop" role="menuitem" tabindex="-1" data-actie="uitleg" data-tekst="MenuUitleg"></button></li>
+        <li role="none"><button class="menuknop" role="menuitem" tabindex="-1" data-actie="privacy" data-tekst="MenuPrivacy"></button></li>
+        <li role="none"><button class="menuknop" role="menuitem" tabindex="-1" data-actie="logboek" data-tekst="WebLogboek"></button></li>
+        <li role="none"><button class="menuknop" role="menuitem" tabindex="-1" data-actie="over" data-tekst="MenuOver"></button></li>
+      </ul></li>
+  </ul>
+</nav>
+<main>
+  <section id="werk" class="kaart" aria-labelledby="appnaam">
+    <div role="tablist" id="tabs">
+      <button role="tab" id="tab-down" aria-selected="true" aria-controls="paneel-down" data-tekst="TabDownloaden"></button>
+      <button role="tab" id="tab-up" aria-selected="false" aria-controls="paneel-up" tabindex="-1" data-tekst="TabUploaden"></button>
+    </div>
+    <div role="tabpanel" id="paneel-down" aria-labelledby="tab-down">
+      <table id="bestanden">
+        <caption data-tekst="LijstNaam"></caption>
+        <thead><tr><th scope="col" data-tekst="KolomNaam"></th><th scope="col" data-tekst="KolomGrootte"></th><th scope="col" data-tekst="KolomDatum"></th><th scope="col" data-tekst="KolomUitleg"></th><th scope="col"><span class="verborgen-visueel" data-tekst="TabDownloaden"></span></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="zacht" data-tekst="WebDownloadUitleg"></p>
+      <div class="rij"><button class="knop" id="knop-vernieuwen" data-tekst="KnopVernieuwen"></button></div>
+    </div>
+    <div role="tabpanel" id="paneel-up" aria-labelledby="tab-up" hidden>
+      <h2 data-tekst="UploadUitlegNaam"></h2>
+      <p id="upload-uitleg"></p>
+      <label for="upload-bestand" data-tekst="GekozenNaam"></label>
+      <input type="file" id="upload-bestand">
+      <div class="rij"><button class="knop hoofd" id="knop-upload" data-tekst="KnopUploaden"></button></div>
+    </div>
+  </section>
+  <section id="status" class="kaart" aria-labelledby="voortgang-naam">
+    <h2 id="voortgang-naam" data-tekst="VoortgangNaam"></h2>
+    <div id="balk" role="progressbar" aria-labelledby="voortgang-naam" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="vulling"></div><span class="pct" aria-hidden="true"></span></div>
+    <h2 id="melding-naam" data-tekst="MeldingNaam"></h2>
+    <div id="melding" role="status" aria-live="polite" aria-atomic="true" aria-labelledby="melding-naam"></div>
+  </section>
+  <section id="help" class="kaart" aria-labelledby="help-titel" hidden>
+    <h2 id="help-titel" tabindex="-1" data-tekst="WebHelpPagina"></h2>
+    <p id="versie" tabindex="-1"></p>
+    <div class="rij"><button class="knop" id="knop-terug" data-tekst="WebTerug"></button></div>
+    <h3 id="uitleg-titel" tabindex="-1" data-tekst="UitlegTitel"></h3>
+    <div id="uitleg-tekst"></div>
+    <h3 id="logboek-titel" tabindex="-1" data-tekst="WebLogboek"></h3>
+    <p data-tekst="WebLogboekUitleg"></p>
+    <label for="logboek" data-tekst="WebLogboek"></label>
+    <textarea id="logboek" readonly rows="8"></textarea>
+    <div class="rij"><button class="knop" id="knop-kopieer" data-tekst="WebKopieer"></button></div>
+    <h3 id="privacy-nl-titel" tabindex="-1" lang="nl" data-tekst="WebPrivacyNl"></h3>
+    <div id="privacy-nl" lang="nl"></div>
+    <h3 id="privacy-en-titel" tabindex="-1" lang="en" data-tekst="WebPrivacyEn"></h3>
+    <div id="privacy-en" lang="en"></div>
+  </section>
+</main>
+<dialog id="vraag" aria-labelledby="vraag-tekst" aria-describedby="vraag-uitleg">
+  <p id="vraag-tekst"></p>
+  <p id="vraag-uitleg" class="zacht"></p>
+  <div class="rij"><button class="knop hoofd" id="vraag-doorgaan" data-tekst="EscDoorgaan"></button><button class="knop" id="vraag-annuleren" data-tekst="EscAnnuleren"></button></div>
+</dialog>
+<script>
+"use strict";
+const D = /*__GEGEVENS__*/null;
+const $ = (id) => document.getElementById(id);
+const opslag = {
+  lees(k) { try { return localStorage.getItem("bestandsbrug." + k); } catch (e) { return null; } },
+  zet(k, v) { try { localStorage.setItem("bestandsbrug." + k, v); } catch (e) {} },
+};
+let taal = opslag.lees("taal") || ((navigator.language || "").toLowerCase().startsWith("nl") ? "nl" : "en");
+if (!D.teksten[taal]) taal = "en";
+let weergave = opslag.lees("weergave") || (matchMedia("(prefers-color-scheme: dark)").matches ? "donker" : "licht");
+let lijst = [];
+let upload = null; // { xhr, naam, gedaan, totaal, start, vorigeMelding }
+const logboek = [];
+
+const t = (k) => (D.teksten[taal][k] || k);
+const f = (k, ...w) => w.reduce((s, x, i) => s.split("{" + i + "}").join(x), t(k));
+
+function log(regel) {
+  const nu = new Date();
+  const p = (n) => String(n).padStart(2, "0");
+  logboek.push(`${nu.getFullYear()}-${p(nu.getMonth() + 1)}-${p(nu.getDate())} ${p(nu.getHours())}:${p(nu.getMinutes())}:${p(nu.getSeconds())} ${regel}`);
+  if (logboek.length > 500) logboek.shift();
+  $("logboek").value = logboek.join("\n");
+}
+
+// Meldingen: het aria-live-gebied wordt alleen hier bijgewerkt (begin, einde, fout, keuzes en de timer).
+let meldTimer = 0;
+function zeg(tekst) {
+  $("melding").textContent = "";
+  clearTimeout(meldTimer);
+  meldTimer = setTimeout(() => { $("melding").textContent = tekst; }, 60);
+}
+
+function grootte(b) {
+  const KB = 1024;
+  if (b < KB) return b + " bytes";
+  let [g, e] = b < KB * KB ? [b / KB, "KB"] : b < KB ** 3 ? [b / KB / KB, "MB"] : [b / KB ** 3, "GB"];
+  const s = g >= 100 ? g.toFixed(0) : g.toFixed(1);
+  return s.replace(".", t("Decimaalteken")) + " " + e;
+}
+
+function datum(s) {
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  const p = (n) => String(n).padStart(2, "0");
+  return t("DatumVorm").replace("{d}", d.getDate()).replace("{maand}", t("Maand" + (d.getMonth() + 1)))
+    .replace("{jaar}", d.getFullYear()).replace("{uur}", p(d.getHours())).replace("{min}", p(d.getMinutes()));
+}
+
+// Tekst (uitleg of privacyverklaring) als kopjes en alinea's, woord voor woord.
+function zetTekst(doel, tekst) {
+  doel.textContent = "";
+  let ul = null;
+  tekst.split(/\r?\n/).forEach((regel, i) => {
+    const r = regel.trim();
+    if (!r) { ul = null; return; }
+    let el;
+    if (i === 0) { el = document.createElement("h4"); }
+    else if (/^\d+\.\s/.test(r)) { el = document.createElement("h4"); ul = null; }
+    else if (r.startsWith("- ")) {
+      if (!ul) { ul = document.createElement("ul"); doel.appendChild(ul); }
+      const li = document.createElement("li"); li.textContent = r.slice(2); ul.appendChild(li); return;
+    } else { el = document.createElement("p"); ul = null; }
+    el.textContent = r;
+    doel.appendChild(el);
+  });
+}
+
+function zetTeksten() {
+  document.documentElement.lang = taal;
+  document.title = t("AppNaam");
+  $("appnaam").textContent = t("AppNaam");
+  $("menu").setAttribute("aria-label", t("WebHoofdmenu"));
+  $("tabs").setAttribute("aria-label", t("AppNaam"));
+  document.querySelectorAll("[data-tekst]").forEach((el) => { el.textContent = t(el.dataset.tekst); });
+  $("upload-uitleg").textContent = t("UploadUitleg");
+  $("versie").textContent = f("WebVersie", D.versie);
+  zetTekst($("uitleg-tekst"), D.uitleg[taal]);
+  zetTekst($("privacy-nl"), D.privacy.nl);
+  zetTekst($("privacy-en"), D.privacy.en);
+  document.querySelectorAll('[data-actie="taal-nl"],[data-actie="taal-en"]').forEach((el) => el.setAttribute("aria-checked", String(el.dataset.actie === "taal-" + taal)));
+  document.querySelectorAll('[data-actie="licht"],[data-actie="donker"]').forEach((el) => el.setAttribute("aria-checked", String(el.dataset.actie === weergave)));
+  zetBalk($("balk").dataset.waarde || 0, true);
+  toonLijst();
+}
+
+function zetWeergave() {
+  document.documentElement.dataset.weergave = weergave;
+}
+
+// ---------- pCloud ----------
+async function api(methode, params) {
+  let fout;
+  for (const server of D.servers) {
+    const url = server + "/" + methode + "?" + new URLSearchParams(params);
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      return await r.json();
+    } catch (e) { fout = e; }
+  }
+  throw fout;
+}
+
+function foutTekst(json) {
+  const c = json && json.result;
+  if ([7001, 7002, 7004, 7005, 7006].includes(c)) return t("FoutLinkWeg");
+  if ([7007, 7008].includes(c)) return t("FoutUploadVol");
+  return f("FoutPcloud", (json && json.error) || String(c));
+}
+
+async function haalLijst(handmatig) {
+  if (handmatig) zeg(t("LijstLaden"));
+  try {
+    const j = await api("showpublink", { code: D.downloadCode });
+    if (j.result !== 0) throw { pcloud: j };
+    const items = ((j.metadata && j.metadata.contents) || []).filter((x) => !x.isfolder);
+    const uitleg = items.find((x) => x.name.toLowerCase() === D.uitlegBestand);
+    lijst = items.filter((x) => x !== uitleg).map((x) => ({ fileid: x.fileid, naam: x.name, grootte: x.size, datum: x.modified, uitleg: "" }))
+      .sort((a, b) => a.naam.toLowerCase().localeCompare(b.naam.toLowerCase()));
+    toonLijst();
+    log(`INFO List loaded: ${lijst.length} files`);
+    zeg(lijst.length === 0 ? t("LijstLeeg") : lijst.length === 1 ? t("LijstEenBestand") : f("LijstGeladen", String(lijst.length)));
+    if (uitleg) haalUitleg(uitleg.fileid);
+  } catch (e) {
+    const tekst = e && e.pcloud ? foutTekst(e.pcloud) : t("FoutGeenInternet");
+    log("ERROR List failed: " + (e && e.pcloud ? JSON.stringify(e.pcloud) : String(e)));
+    zeg(f("FoutLijst", tekst));
+  }
+}
+
+// uitleg.txt lezen lukt alleen als de browser het toestaat; anders gewoon zonder uitleg.
+async function haalUitleg(fileid) {
+  try {
+    const j = await api("getpublinkdownload", { code: D.downloadCode, fileid });
+    const r = await fetch("https://" + j.hosts[0] + j.path);
+    const kaart = {};
+    (await r.text()).split(/\r?\n/).forEach((regel) => {
+      const i = regel.indexOf("=");
+      if (i > 0 && !regel.trim().startsWith("#")) kaart[regel.slice(0, i).trim().toLowerCase()] = regel.slice(i + 1).trim();
+    });
+    lijst.forEach((b) => { b.uitleg = kaart[b.naam.toLowerCase()] || ""; });
+    toonLijst();
+  } catch (e) { log("INFO uitleg.txt not readable in this browser"); }
+}
+
+function toonLijst() {
+  const tb = document.querySelector("#bestanden tbody");
+  tb.textContent = "";
+  for (const b of lijst) {
+    const tr = document.createElement("tr");
+    const th = document.createElement("th"); th.scope = "row"; th.textContent = b.naam; tr.appendChild(th);
+    for (const [w, k] of [[grootte(b.grootte), "getal"], [datum(b.datum), "getal"], [b.uitleg, ""]]) {
+      const td = document.createElement("td"); td.textContent = w; if (k) td.className = k; tr.appendChild(td);
+    }
+    const td = document.createElement("td");
+    const knop = document.createElement("button");
+    knop.className = "knop hoofd";
+    knop.textContent = t("KnopDownloaden");
+    knop.setAttribute("aria-label", t("KnopDownloaden") + ": " + b.naam);
+    knop.addEventListener("click", () => download(b));
+    td.appendChild(knop); tr.appendChild(td); tb.appendChild(tr);
+  }
+}
+
+// Downloaden gaat via de browser zelf (de downloadservers van pCloud staan geen voortgang toe vanuit een los bestand).
+async function download(b) {
+  try {
+    const j = await api("getpublinkdownload", { code: D.downloadCode, fileid: b.fileid, forcedownload: 1 });
+    if (j.result !== 0) { zeg(f("MeldDownloadFout", foutTekst(j))); log("ERROR Download failed: " + b.naam + ": " + j.result); return; }
+    const a = document.createElement("a");
+    a.href = "https://" + j.hosts[0] + j.path;
+    a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    log(`INFO Download started in browser: ${b.naam} (${b.grootte} bytes)`);
+    zeg(f("WebDownloadGestart", b.naam));
+  } catch (e) {
+    log("ERROR Download failed: " + b.naam + ": " + e);
+    zeg(f("MeldDownloadFout", t("FoutGeenInternet")));
+  }
+}
+
+// ---------- Uploaden, met voortgang elke 6 seconden ----------
+function zetBalk(pct, ookVoorSchermlezer) {
+  pct = Math.max(0, Math.min(100, Math.floor(pct)));
+  $("balk").dataset.waarde = pct;
+  $("balk").querySelector(".vulling").style.width = pct + "%";
+  $("balk").querySelector(".pct").textContent = pct ? pct + " %" : "";
+  $("balk").classList.toggle("vol", pct >= 50);
+  if (ookVoorSchermlezer) {
+    $("balk").setAttribute("aria-valuenow", String(pct));
+    $("balk").setAttribute("aria-valuetext", f("BalkWaarde", String(pct)));
+  }
+}
+
+function restTekst(sec) {
+  if (sec < 60) { const a = Math.max(5, Math.ceil(sec / 5) * 5); return a >= 60 ? t("MeldNogMinuut") : f("MeldNogSeconden", String(a)); }
+  const m = Math.round(sec / 60);
+  return m <= 1 ? t("MeldNogMinuut") : f("MeldNogMinuten", String(m));
+}
+
+function voortgangTekst() {
+  const pct = upload.totaal ? Math.floor(upload.gedaan * 100 / upload.totaal) : 0;
+  let s = f("MeldUploadVoortgang", String(pct));
+  const sec = (Date.now() - upload.start) / 1000;
+  if (upload.gedaan > 0 && sec >= 1) s += restTekst(Math.ceil((upload.totaal - upload.gedaan) / (upload.gedaan / sec)));
+  return s + ".";
+}
+
+setInterval(() => {
+  if (!upload || $("vraag").open) return;
+  if (Date.now() - upload.vorigeMelding + 150 >= D.meldSeconden * 1000) {
+    upload.vorigeMelding = Date.now();
+    zetBalk(upload.totaal ? upload.gedaan * 100 / upload.totaal : 0, true);
+    zeg(voortgangTekst());
+  }
+}, 500);
+
+async function startUpload() {
+  if (upload) { zeg(t("AlBezig")); return; }
+  const bestand = $("upload-bestand").files[0];
+  if (!bestand) { zeg(t("GeenUploadKeuze")); return; }
+  if (bestand.size === 0) { zeg(t("LeegBestand")); return; }
+  try {
+    const j = await api("showuploadlink", { code: D.uploadCode });
+    if (j.result !== 0) { zeg(f("MeldUploadFout", foutTekst(j))); return; }
+    if (j.maxspace > 0) {
+      const magNog = Math.max(0, j.maxspace - Math.max(j.space || 0, j.usedspace || 0));
+      if (magNog === 0) { zeg(f("MeldUploadFout", t("FoutUploadVol"))); return; }
+      if (bestand.size > magNog) { zeg(f("MeldUploadFout", f("FoutTeGroot", grootte(magNog), grootte(bestand.size)))); return; }
+    }
+    if (j.maxfiles > 0 && (j.files || 0) >= j.maxfiles) { zeg(f("MeldUploadFout", t("FoutUploadVol"))); return; }
+  } catch (e) { zeg(f("MeldUploadFout", t("FoutGeenInternet"))); return; }
+  const xhr = new XMLHttpRequest();
+  upload = { xhr, naam: bestand.name, gedaan: 0, totaal: bestand.size, start: Date.now(), vorigeMelding: Date.now() };
+  const url = D.servers[0] + "/uploadtolink?" + new URLSearchParams({ code: D.uploadCode, names: D.uploader, nopartial: 1 });
+  xhr.open("POST", url);
+  xhr.upload.onprogress = (e) => { if (upload && e.lengthComputable) { upload.gedaan = e.loaded; upload.totaal = e.total; zetBalk(e.loaded * 100 / e.total, false); } };
+  const einde = (tekst, regel) => { log(regel); upload = null; zeg(tekst); };
+  xhr.onload = () => {
+    let j = null; try { j = JSON.parse(xhr.responseText); } catch (e) {}
+    if (j && j.result === 0) { zetBalk(100, true); einde(f("MeldUploadKlaar", bestand.name), `INFO Upload done: ${bestand.name} (${bestand.size} bytes)`); }
+    else { zetBalk(0, true); einde(f("MeldUploadFout", foutTekst(j)), `ERROR Upload failed: ${bestand.name}: ${j ? j.result : xhr.status}`); }
+  };
+  xhr.onerror = () => { zetBalk(0, true); einde(f("MeldUploadFout", t("FoutGeenInternet")), `ERROR Upload failed: ${bestand.name}: network`); };
+  xhr.onabort = () => { zetBalk(0, true); einde(t("MeldUploadGeannuleerd"), `INFO Upload cancelled: ${bestand.name}`); };
+  const fd = new FormData();
+  fd.append("file", bestand, bestand.name);
+  log(`INFO Upload start: ${bestand.name} (${bestand.size} bytes)`);
+  zetBalk(0, true);
+  zeg(f("MeldUploadStart", bestand.name));
+  xhr.send(fd);
+}
+
+// Escape tijdens een upload: Doorgaan (focus) of Alles nu annuleren.
+function escapeVraag() {
+  if (!upload) return;
+  $("vraag-tekst").textContent = f("EscVraagUpload", upload.naam);
+  $("vraag-uitleg").textContent = t("EscUploadUitleg");
+  const terug = document.activeElement;
+  $("vraag").showModal();
+  $("vraag-doorgaan").focus();
+  $("vraag").onclose = () => {
+    if ($("vraag").returnValue === "annuleren" && upload) upload.xhr.abort();
+    else if (upload) zeg(t("MeldVerder"));
+    $("vraag").returnValue = "";
+    if (terug && terug.focus) terug.focus();
+  };
+}
+$("vraag-doorgaan").addEventListener("click", () => $("vraag").close("doorgaan"));
+$("vraag-annuleren").addEventListener("click", () => $("vraag").close("annuleren"));
+$("vraag").addEventListener("cancel", (e) => { e.preventDefault(); $("vraag").close("doorgaan"); });
+
+window.addEventListener("beforeunload", (e) => { if (upload) { e.preventDefault(); e.returnValue = ""; } });
+
+// ---------- Tabbladen ----------
+function kiesTab(n, focus) {
+  ["tab-down", "tab-up"].forEach((id, i) => {
+    $(id).setAttribute("aria-selected", String(i === n));
+    $(id).tabIndex = i === n ? 0 : -1;
+  });
+  $("paneel-down").hidden = n !== 0;
+  $("paneel-up").hidden = n !== 1;
+  $("werk").hidden = false;
+  $("help").hidden = true;
+  if (focus) $(n === 0 ? "tab-down" : "tab-up").focus();
+}
+$("tabs").addEventListener("click", (e) => { if (e.target.id === "tab-down") kiesTab(0, true); if (e.target.id === "tab-up") kiesTab(1, true); });
+$("tabs").addEventListener("keydown", (e) => {
+  const n = $("tab-up").getAttribute("aria-selected") === "true" ? 1 : 0;
+  if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
+    e.preventDefault();
+    kiesTab(e.key === "Home" ? 0 : e.key === "End" ? 1 : 1 - n, true);
+  }
+});
+
+// ---------- Help ----------
+function toonHelp(doel) {
+  $("werk").hidden = true;
+  $("help").hidden = false;
+  $("logboek").value = logboek.join("\n");
+  $(doel).focus();
+}
+$("knop-terug").addEventListener("click", () => kiesTab(0, true));
+$("knop-kopieer").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(logboek.join("\r\n")); zeg(t("WebGekopieerd")); }
+  catch (e) { $("logboek").select(); zeg(t("WebNietGekopieerd")); }
+});
+
+// ---------- Menu (zoals een menubalk in Windows) ----------
+const balkknoppen = [...document.querySelectorAll('#menubalk > li > [role="menuitem"]')];
+const submenu = (k) => k.nextElementSibling;
+const items = (m) => [...m.querySelectorAll('[role^="menuitem"]')];
+function sluitMenus() { balkknoppen.forEach((k) => { k.setAttribute("aria-expanded", "false"); submenu(k).hidden = true; }); }
+function openMenu(k, eerste) {
+  sluitMenus();
+  k.setAttribute("aria-expanded", "true");
+  const m = submenu(k);
+  m.hidden = false;
+  const lijstje = items(m);
+  const gekozen = lijstje.find((x) => x.getAttribute("aria-checked") === "true");
+  (eerste === "laatste" ? lijstje[lijstje.length - 1] : gekozen || lijstje[0]).focus();
+}
+function zetBalkFocus(k) { balkknoppen.forEach((x) => { x.tabIndex = x === k ? 0 : -1; }); k.focus(); }
+balkknoppen.forEach((k, i) => {
+  k.addEventListener("click", () => (k.getAttribute("aria-expanded") === "true" ? sluitMenus() : openMenu(k)));
+  k.addEventListener("keydown", (e) => {
+    const n = balkknoppen.length;
+    if (e.key === "ArrowRight") { e.preventDefault(); zetBalkFocus(balkknoppen[(i + 1) % n]); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); zetBalkFocus(balkknoppen[(i + n - 1) % n]); }
+    else if (e.key === "Home") { e.preventDefault(); zetBalkFocus(balkknoppen[0]); }
+    else if (e.key === "End") { e.preventDefault(); zetBalkFocus(balkknoppen[n - 1]); }
+    else if (["ArrowDown", "Enter", " "].includes(e.key)) { e.preventDefault(); openMenu(k); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); openMenu(k, "laatste"); }
+  });
+  submenu(k).addEventListener("keydown", (e) => {
+    const lijstje = items(submenu(k));
+    const j = lijstje.indexOf(document.activeElement);
+    const n = balkknoppen.length;
+    if (e.key === "ArrowDown") { e.preventDefault(); lijstje[(j + 1) % lijstje.length].focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); lijstje[(j + lijstje.length - 1) % lijstje.length].focus(); }
+    else if (e.key === "Home") { e.preventDefault(); lijstje[0].focus(); }
+    else if (e.key === "End") { e.preventDefault(); lijstje[lijstje.length - 1].focus(); }
+    else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); sluitMenus(); zetBalkFocus(k); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); const v = balkknoppen[(i + 1) % n]; zetBalkFocus(v); openMenu(v); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); const v = balkknoppen[(i + n - 1) % n]; zetBalkFocus(v); openMenu(v); }
+    else if (e.key === "Tab") { sluitMenus(); }
+  });
+});
+document.addEventListener("click", (e) => { if (!e.target.closest("#menubalk")) sluitMenus(); });
+document.querySelectorAll("[data-actie]").forEach((el) => el.addEventListener("click", () => {
+  const actie = el.dataset.actie;
+  const ouder = balkknoppen.find((k) => submenu(k).contains(el));
+  sluitMenus();
+  if (ouder) zetBalkFocus(ouder);
+  doe(actie);
+}));
+
+function doe(actie) {
+  switch (actie) {
+    case "vernieuwen": haalLijst(true); break;
+    case "naar-download": kiesTab(0, true); break;
+    case "naar-upload": kiesTab(1, true); break;
+    case "taal-nl": case "taal-en":
+      taal = actie.slice(5); opslag.zet("taal", taal); zetTeksten(); log("INFO Language: " + taal);
+      setTimeout(() => zeg(t("TaalGekozen")), 400); break;
+    case "licht": case "donker":
+      weergave = actie; opslag.zet("weergave", weergave); zetWeergave(); zetTeksten(); log("INFO View: " + weergave);
+      setTimeout(() => zeg(t(actie === "licht" ? "WeergaveLicht" : "WeergaveDonker")), 400); break;
+    case "uitleg": toonHelp("uitleg-titel"); break;
+    case "privacy": toonHelp(taal === "nl" ? "privacy-nl-titel" : "privacy-en-titel"); break;
+    case "logboek": toonHelp("logboek-titel"); break;
+    case "over": toonHelp("versie"); break;
+  }
+}
+
+// ---------- Sneltoetsen ----------
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && upload && !$("vraag").open && !balkknoppen.some((k) => k.getAttribute("aria-expanded") === "true")) {
+    e.preventDefault(); escapeVraag();
+  } else if (e.key === "F1") { e.preventDefault(); doe("uitleg"); }
+});
+$("knop-vernieuwen").addEventListener("click", () => haalLijst(true));
+$("knop-upload").addEventListener("click", startUpload);
+
+// ---------- Start ----------
+zetWeergave();
+zetTeksten();
+log(`INFO Start, version ${D.versie}, language ${taal}, view ${weergave}`);
+haalLijst(false);
+</script>
+</body>
+</html>

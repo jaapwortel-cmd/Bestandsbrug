@@ -2,7 +2,9 @@
 //! Het scherm (alleen Windows) staat in src/scherm en wordt vanuit main.rs gestart.
 
 pub mod fout;
+pub mod html;
 pub mod instellingen;
+pub mod kleuren;
 pub mod log;
 pub mod melding;
 pub mod net;

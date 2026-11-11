@@ -59,3 +59,10 @@ pub const STUK_BYTES: usize = 256 * 1024;
 
 /// Achtervoegsel van een half gedownload bestand.
 pub const DEEL_ACHTERVOEGSEL: &str = ".bestandsbrug-deel";
+
+/// Technische namen voor Windows (nooit zichtbaar voor de gebruiker).
+pub const KLASSE_HOOFDVENSTER: &str = "BestandsbrugVenster";
+pub const KLASSE_TEKSTVENSTER: &str = "BestandsbrugTekst";
+pub const MELDING_ID: &str = "Bestandsbrug.melding";
+/// Naam van het losse HTML-bestand.
+pub const HTML_BESTAND: &str = "Bestandsbrug.html";

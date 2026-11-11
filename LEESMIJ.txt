@@ -1,0 +1,35 @@
+BESTANDSBRUG - LEES MIJ
+
+Wat is dit?
+Met Bestandsbrug kun je de apps van Jaap Wortel downloaden. Je kunt ook een bestand naar Jaap sturen. Alles gaat via pCloud. Je hoeft je niet aan te melden.
+
+Wat staat er in deze map?
+- Bestandsbrug-Setup.exe: hiermee installeer je de app op Windows.
+- Bestandsbrug.html: dezelfde app in je browser. Dubbelklik erop. Je hoeft niets te installeren.
+- versie.txt: voor de updates. Je hoeft hier niets mee te doen.
+- Privacyverklaring.txt en Privacy-statement.txt: de privacyverklaring in het Nederlands en het Engels.
+
+Installeren
+Dubbelklik op Bestandsbrug-Setup.exe. Zegt Windows dat het bestand onbekend is? Kies dan "Meer informatie" en daarna "Toch uitvoeren". De app is niet digitaal ondertekend. Daarom geeft Windows deze waarschuwing.
+
+Hulp
+Druk in de app op F1 voor uitleg.
+
+-----
+
+FILEBRIDGE - READ ME
+
+What is this?
+With Filebridge you can download the apps of Jaap Wortel. You can also send a file to Jaap. Everything goes through pCloud. You do not need to sign in.
+
+What is in this folder?
+- Bestandsbrug-Setup.exe: use this to install the app on Windows.
+- Bestandsbrug.html: the same app in your browser. Double-click it. You do not need to install anything.
+- versie.txt: for updates. You do not need to do anything with it.
+- Privacyverklaring.txt and Privacy-statement.txt: the privacy statement in Dutch and English.
+
+Install
+Double-click Bestandsbrug-Setup.exe. Does Windows say the file is unknown? Then choose "More info" and then "Run anyway". The app is not digitally signed. That is why Windows shows this warning.
+
+Help
+Press F1 in the app for instructions.

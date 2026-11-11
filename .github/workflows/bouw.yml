@@ -1,0 +1,130 @@
+# Bouwt Bestandsbrug op Windows met bouw-alles.ps1, test alles en zet de oplevering op de tak "exe-builds".
+# Proeven: alle tests, de echte pCloud-lijst en -download, opstarten met meting, toegankelijkheid (FlaUI),
+# schermafbeeldingen licht en donker, en installeren, opnieuw installeren (update) en verwijderen.
+name: Bestandsbrug maken
+
+on:
+  push:
+    branches-ignore:
+      - exe-builds
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bouw-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bouw:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Alles bouwen (app, tests, HTML, installatiebestand, versie.txt)
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\bouw-alles.ps1
+
+      - name: Echte pCloud-proef (lijst en download van Paper Pilot)
+        shell: powershell
+        run: |
+          cargo test --release --test echt -- --ignored --nocapture echte_lijst_en_download
+          if ($LASTEXITCODE) { throw 'De echte pCloud-proef is niet geslaagd.' }
+
+      - name: Installeren, opstarten met meting, en de update-proef
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $setup = 'oplevering\Bestandsbrug-Setup.exe'
+          $map = Join-Path $env:LOCALAPPDATA 'Programs\Bestandsbrug'
+          $p = Start-Process -FilePath $setup -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LANG=nl') -PassThru -Wait
+          if ($p.ExitCode -ne 0) { throw ('Installeren mislukt, code ' + $p.ExitCode) }
+          Start-Sleep -Seconds 3
+          Get-Process Bestandsbrug -ErrorAction SilentlyContinue | Stop-Process -Force
+          foreach ($f in @('Bestandsbrug.exe', 'Privacyverklaring.txt', 'Privacy-statement.txt', 'LEESMIJ.txt')) {
+            if (-not (Test-Path (Join-Path $map $f))) { throw "Na installeren staat $f er niet." }
+          }
+          $lnk = Join-Path ([Environment]::GetFolderPath('Programs')) 'Bestandsbrug.lnk'
+          if (-not (Test-Path $lnk)) { throw 'De snelkoppeling in het Startmenu ontbreekt.' }
+          $exe = Join-Path $map 'Bestandsbrug.exe'
+          # Opstarten en meten (drie keer; de eerste keer is Windows nog koud).
+          foreach ($i in 1..3) {
+            $meting = Join-Path $PWD "meting-$i.txt"
+            $sw = [Diagnostics.Stopwatch]::StartNew()
+            $p = Start-Process -FilePath $exe -ArgumentList @('--meet', "`"$meting`"", '--geen-update', '--sluit-na', '30') -PassThru
+            [void]$p.WaitForInputIdle(10000)
+            $idle = $sw.ElapsedMilliseconds
+            if (-not $p.WaitForExit(40000)) { $p.Kill(); throw 'De app sloot niet af.' }
+            Write-Host "Ronde ${i}: klaar voor invoer na $idle ms (gemeten van buiten)"
+            Get-Content -LiteralPath $meting | Write-Host
+            Add-Content -LiteralPath 'meting.txt' -Value ("Ronde ${i}: klaar voor invoer na $idle ms") 
+            Get-Content -LiteralPath $meting | Add-Content -LiteralPath 'meting.txt'
+          }
+          # Instellingen moeten een update overleven.
+          $voorkeuren = Join-Path $env:APPDATA 'Bestandsbrug\voorkeuren.json'
+          '{"taal":"en","weergave":"donker","update_later":null}' | Set-Content -LiteralPath $voorkeuren -Encoding ASCII
+          $p = Start-Process -FilePath $setup -ArgumentList @('/SILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LANG=en') -PassThru -Wait
+          if ($p.ExitCode -ne 0) { throw ('Opnieuw installeren (update) mislukt, code ' + $p.ExitCode) }
+          Start-Sleep -Seconds 5
+          $loopt = Get-Process Bestandsbrug -ErrorAction SilentlyContinue
+          if (-not $loopt) { throw 'Na een stille update startte de app niet vanzelf weer.' }
+          $loopt | Stop-Process -Force
+          if ((Get-Content -LiteralPath $voorkeuren -Raw) -notmatch '"donker"') { throw 'De instellingen zijn weg na de update.' }
+          $lnkEn = Join-Path ([Environment]::GetFolderPath('Programs')) 'Filebridge.lnk'
+          if (-not (Test-Path $lnkEn)) { throw 'De Engelse snelkoppeling (Filebridge) ontbreekt.' }
+          Write-Host 'Installeren, opnieuw installeren met behoud van instellingen, en opnieuw starten: goed.'
+          Remove-Item -LiteralPath $voorkeuren -Force
+
+      - name: Toegankelijkheid (namen, Tab-volgorde en menu's voor de schermlezer)
+        continue-on-error: true
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\Toegankelijkheid.ps1 -Exe "$env:LOCALAPPDATA\Programs\Bestandsbrug\Bestandsbrug.exe" -Argumenten '--geen-update --sluit-na 90'
+
+      - name: Schermafbeeldingen (licht Nederlands, donker Engels)
+        shell: powershell
+        run: |
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs\Bestandsbrug\Bestandsbrug.exe'
+          foreach ($keuze in @(@('nl', 'licht'), @('en', 'donker'))) {
+            $p = Start-Process -FilePath $exe -ArgumentList @('--taal', $keuze[0], '--weergave', $keuze[1], '--geen-update', '--sluit-na', '20') -PassThru
+            Start-Sleep -Seconds 8
+            try {
+              $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+              $bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
+              $g = [System.Drawing.Graphics]::FromImage($bmp)
+              $g.CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size)
+              $bmp.Save("$PWD\scherm-$($keuze[1]).png", [System.Drawing.Imaging.ImageFormat]::Png)
+              $g.Dispose(); $bmp.Dispose()
+            } catch { Write-Host ('Geen schermafbeelding: ' + $_) }
+            if (-not $p.WaitForExit(30000)) { $p.Kill() }
+          }
+
+      - name: Verwijderen
+        shell: powershell
+        run: |
+          $map = Join-Path $env:LOCALAPPDATA 'Programs\Bestandsbrug'
+          Get-Process Bestandsbrug -ErrorAction SilentlyContinue | Stop-Process -Force
+          $p = Start-Process -FilePath (Join-Path $map 'unins000.exe') -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -PassThru -Wait
+          Start-Sleep -Seconds 3
+          if (Test-Path (Join-Path $map 'Bestandsbrug.exe')) { throw 'Na verwijderen staat Bestandsbrug.exe er nog.' }
+          Write-Host 'Verwijderen: goed.'
+
+      - name: Oplevering op de tak exe-builds zetten
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Copy-Item -Path 'meting.txt' -Destination 'oplevering\' -ErrorAction SilentlyContinue
+          if (Test-Path 'toegankelijkheid.txt') { Copy-Item 'toegankelijkheid.txt' 'oplevering\' }
+          foreach ($f in @('scherm-licht.png', 'scherm-donker.png')) { if (Test-Path $f) { Copy-Item $f 'oplevering\' } }
+          Get-ChildItem oplevering | ForEach-Object { Write-Host $_.Name }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          $tak = "${{ github.ref_name }}"
+          git checkout --orphan exe-builds
+          git rm -r -q --cached .
+          git add -f -- oplevering
+          git commit -q -m "Bestandsbrug oplevering (tak $tak)"
+          if ($LASTEXITCODE) { throw 'Commit mislukt.' }
+          git push -f origin exe-builds
+          if ($LASTEXITCODE) { throw 'Push mislukt.' }

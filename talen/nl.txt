@@ -177,3 +177,9 @@ WebTerug = &Terug
 WebPrivacyNl = Privacyverklaring (Nederlands)
 WebPrivacyEn = Privacy statement (English)
 WebGeenVerbindingBestand = Je browser laat {naam} niet met pCloud praten. Gebruik een andere browser, of de Windows-app.
+
+# Toegevoegd bij het scherm
+BalkWaarde = {0} procent
+GekozenMelding = Gekozen: {0}. Kies nu Uploaden.
+UpdateBinnen = De nieuwe versie is gedownload en gecontroleerd.
+EscUpdateUitleg = Een update kan niet later verdergaan. Je kunt doorgaan of alles annuleren.
