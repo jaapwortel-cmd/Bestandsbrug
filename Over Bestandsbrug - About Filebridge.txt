@@ -1,0 +1,77 @@
+OVER BESTANDSBRUG
+
+Wat is Bestandsbrug?
+Bestandsbrug is een gratis programma voor Windows, gemaakt door Jaap Wortel. Je kunt er twee dingen mee doen:
+1. de programma's van Jaap downloaden;
+2. zelf een bestand of een hele map naar Jaap sturen.
+Alles gaat via pCloud. Je hoeft je niet aan te melden en je hoeft nergens voor te betalen.
+
+Wat kan Bestandsbrug?
+- Je ziet de programma's van Jaap in mappen, net als in de Verkenner van Windows. Met Enter open je een map, met Backspace ga je terug.
+- Je downloadt een los bestand, of een hele map met alles erin.
+- Je stuurt een bestand of een hele map naar Jaap. Alleen Jaap ziet wat je stuurt. Jij kunt de bestanden van anderen niet zien.
+- Tijdens het downloaden of uploaden hoor je elke 6 seconden hoe ver het is.
+- Bij het opstarten hoor je wat er nieuw is sinds de vorige keer.
+- Je kunt kiezen uit Nederlands en Engels, en uit een lichte of donkere weergave.
+- Bestandsbrug kijkt zelf of er een nieuwe versie is.
+
+Voor iedereen
+Bestandsbrug werkt goed met een schermlezer, zoals JAWS, NVDA en Verteller. Je kunt alles met het toetsenbord doen. Druk in het programma op F1 voor uitleg.
+
+Gratis
+Iedereen mag Bestandsbrug gratis installeren en gebruiken. Geef het gerust door aan anderen.
+
+Wat staat er in deze zip?
+- Bestandsbrug-Setup.exe: hiermee installeer je Bestandsbrug op Windows.
+- Bestandsbrug.html: dezelfde app in je browser. Dubbelklik erop. Je hoeft dan niets te installeren.
+- Privacyverklaring.txt en Privacy-statement.txt: de privacyverklaring in het Nederlands en het Engels.
+
+Installeren
+1. Pak de zip uit.
+2. Dubbelklik op Bestandsbrug-Setup.exe.
+3. Zegt Windows dat het bestand onbekend is? Kies dan "Meer informatie" en daarna "Toch uitvoeren". Windows zegt dit omdat het programma niet digitaal ondertekend is. Het is veilig.
+4. Volg de stappen. Je hebt geen beheerdersrechten nodig.
+Je hebt Windows 10 of 11 nodig, en internet.
+
+Vragen?
+Het e-mailadres van Jaap staat in de privacyverklaring.
+
+---------------------------------------------
+
+ABOUT FILEBRIDGE
+
+What is Filebridge?
+Filebridge is a free program for Windows, made by Jaap Wortel. In Dutch it is called Bestandsbrug. You can do two things with it:
+1. download Jaap's programs;
+2. send a file or a whole folder to Jaap yourself.
+Everything goes through pCloud. You do not need to sign in and you do not need to pay for anything.
+
+What can Filebridge do?
+- You see Jaap's programs in folders, just like in Windows File Explorer. Press Enter to open a folder, and Backspace to go back.
+- You download a single file, or a whole folder with everything in it.
+- You send a file or a whole folder to Jaap. Only Jaap can see what you send. You cannot see files from other people.
+- While downloading or uploading, you hear every 6 seconds how far it is.
+- When starting, you hear what is new since last time.
+- You can choose Dutch or English, and a light or dark view.
+- Filebridge checks by itself if there is a new version.
+
+For everyone
+Filebridge works well with a screen reader, such as JAWS, NVDA and Narrator. You can do everything with the keyboard. Press F1 in the program for instructions.
+
+Free
+Everyone may install and use Filebridge for free. Feel free to pass it on to others.
+
+What is in this zip?
+- Bestandsbrug-Setup.exe: use this to install Filebridge on Windows.
+- Bestandsbrug.html: the same app in your browser. Double-click it. You do not need to install anything.
+- Privacyverklaring.txt and Privacy-statement.txt: the privacy statement in Dutch and English.
+
+Install
+1. Unzip the file.
+2. Double-click Bestandsbrug-Setup.exe.
+3. Does Windows say the file is unknown? Then choose "More info" and then "Run anyway". Windows says this because the program is not digitally signed. It is safe.
+4. Follow the steps. You do not need administrator rights.
+You need Windows 10 or 11, and internet.
+
+Questions?
+Jaap's email address is in the privacy statement.

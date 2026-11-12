@@ -45,6 +45,7 @@ src/scherm/               het Windows-scherm (alleen Windows)
   thema.rs, tekenen.rs    kleuren/letters en het tekenen (knoppen, tabbladen, balk, kaarten)
   dialogen.rs, win.rs     standaardvensters van Windows (opslaan/openen, Verkenner) en kleine hulpjes
 talen/                    nl.txt, en.txt (alle teksten), uitleg-nl/en.txt, privacy-nl/en.txt (de ENIGE bron)
+Over Bestandsbrug - About Filebridge.txt  uitleg voor nieuwe gebruikers (nl, dan en), gaat mee in de oplevering
 web/bestandsbrug.html     bron van Bestandsbrug.html (HTML, CSS, JS; gegevens worden ingevuld)
 installatie/bestandsbrug.iss  Inno Setup-script
 assets/                   icoon en manifest
@@ -129,6 +130,8 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
   (niet gecontroleerd in Jaaps map). HTML: webkitdirectory + eigen zip-schrijver (stored, CRC32) in JS.
 - Nieuw sinds de vorige keer (Jaaps keuze, nog 1.0.1): gezien.json (lijst::sleutel = fileid:hash); bij het opstarten
   een melding en "nieuw" in de kolom Soort (ook bij de map). HTML: localStorage "gezien". desktop.ini e.d. verborgen.
-- Versie blijft 1.0.1 tot Jaap hem aan anderen geeft (Jaap, 12 nov). Installatiefout "Cannot focus a disabled or
+- Versie blijft 1.0.1 tot Jaap hem aan anderen geeft (Jaap, 12 nov).
+- Delen (12 nov): Jaap deelt een zip via een eigen Dropbox-link (niet de updatemap) met Bestandsbrug-Setup.exe,
+  Bestandsbrug.html, "Over Bestandsbrug - About Filebridge.txt" en de twee privacybestanden (geen versie.txt). Installatiefout "Cannot focus a disabled or
   invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
 - Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).

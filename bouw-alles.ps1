@@ -62,6 +62,8 @@ foreach ($m in @($oplevering, $installatiemap)) {
     Schrijf-Tekst (Join-Path $m 'LEESMIJ.txt') ([IO.File]::ReadAllText("$PSScriptRoot\LEESMIJ.txt"))
     Schrijf-Tekst (Join-Path $m 'Wijzigingen.txt') ([IO.File]::ReadAllText("$PSScriptRoot\Wijzigingen.txt"))
 }
+# Uitleg voor nieuwe gebruikers (Nederlands en Engels), om samen met het installatiebestand te delen.
+Schrijf-Tekst (Join-Path $oplevering 'Over Bestandsbrug - About Filebridge.txt') ([IO.File]::ReadAllText("$PSScriptRoot\Over Bestandsbrug - About Filebridge.txt"))
 
 # 5. Het losse HTML-bestand.
 & 'target\release\maak-html.exe' (Join-Path $oplevering 'Bestandsbrug.html')
