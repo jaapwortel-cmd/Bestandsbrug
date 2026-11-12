@@ -8,16 +8,28 @@ use bestandsbrug::overdracht::{deel_pad, Voortgang};
 use bestandsbrug::pcloud::{download, lijst, upload};
 
 #[test]
-fn lijst_lezen_zonder_mappen() {
+fn lijst_lezen_met_app_mappen() {
     let json: serde_json::Value = serde_json::from_str(r#"{"result":0,"metadata":{"contents":[
         {"name":"b.exe","fileid":2,"size":10,"modified":"Wed, 11 Nov 2026 17:42:23 +0000","hash":5,"isfolder":false},
-        {"name":"Map","folderid":3,"isfolder":true},
+        {"name":"Paper Pilot","folderid":3,"isfolder":true,"contents":[
+            {"name":"Paper Pilot 0.0.0.16 installatie.exe","fileid":7,"size":30,"isfolder":false},
+            {"name":"Diep","folderid":4,"isfolder":true,"contents":[{"name":"x.dll","fileid":8,"size":1,"isfolder":false}]}]},
         {"name":"A.exe","fileid":1,"size":20,"modified":"Wed, 11 Nov 2026 17:42:23 +0000","hash":9223372036854775808,"isfolder":false}]}}"#).unwrap();
     let l = lijst::lees_inhoud(&json);
-    assert_eq!(l.len(), 2);
+    assert_eq!(l.len(), 4, "alle bestanden, ook in diepe mappen");
     assert_eq!(l[0].naam, "A.exe");
+    assert_eq!(l[2].map, "Paper Pilot");
+    assert_eq!(l[3].map, "Paper Pilot/Diep");
+    // De boom: eerst de mappen, dan de bestanden.
+    let boom = lijst::maak_boom(&l);
+    assert_eq!(boom.mappen.len(), 1);
+    assert_eq!(boom.bestanden.iter().map(|&i| l[i].naam.as_str()).collect::<Vec<_>>(), vec!["A.exe", "b.exe"]);
+    let pp = &boom.mappen[0];
+    assert_eq!((pp.naam.as_str(), pp.pad.as_str()), ("Paper Pilot", "Paper Pilot"));
+    assert_eq!(pp.mappen[0].pad, "Paper Pilot/Diep");
+    assert_eq!(l[pp.mappen[0].bestanden[0]].naam, "x.dll");
     assert_eq!(l[0].hash, 9223372036854775808);
-    assert_eq!(lijst::nieuwe_namen(&l[..1], &l), vec!["b.exe".to_string()]);
+    assert_eq!(lijst::nieuwe_namen(&l[..2], &l), vec!["Paper Pilot 0.0.0.16 installatie.exe".to_string(), "x.dll".to_string()]);
 }
 
 #[test]
@@ -89,4 +101,65 @@ fn stoppen_en_annuleren() {
     assert!(matches!(r, Err(Fout::Gestopt(Stop::Annuleer))));
     assert!(!deel_pad(&doel).exists(), "bij annuleren is het halve bestand weg");
     assert!(!doel.exists());
+}
+
+#[test]
+fn hele_map_downloaden() {
+    let map = hulp::eigen_map("hele-map");
+    let maak = |id: u64, naam: &str, mapnaam: &str, grootte: u64| bestandsbrug::pcloud::lijst::Bestand {
+        fileid: id, naam: naam.into(), grootte, gewijzigd: String::new(), hash: 0, map: mapnaam.into(), uitleg: String::new(),
+    };
+    let lijst = vec![
+        maak(1, "a.exe", "App", 10),
+        maak(2, "b.dll", "App/sub", 20),
+        maak(3, "c.exe", "Ander", 30),
+        maak(4, "d:e?.txt", "App", 5),
+    ];
+    let doel = map.join("App");
+    let l = download::bestanden_in_map(&lijst, "App", &doel);
+    assert_eq!(l.len(), 3);
+    assert_eq!(l[0].1, doel.join("a.exe"));
+    assert_eq!(l[1].1, doel.join("sub").join("b.dll"));
+    assert_eq!(l[2].1, doel.join("d_e_.txt"));
+    assert_eq!(download::veilige_naam(".."), "_");
+}
+
+#[test]
+fn map_inpakken_voor_upload() {
+    let map = hulp::eigen_map("upload-map");
+    let bron = map.join("Mijn map");
+    std::fs::create_dir_all(bron.join("sub")).unwrap();
+    std::fs::write(bron.join("a.txt"), "aaa").unwrap();
+    std::fs::write(bron.join("sub").join("b.txt"), vec![7u8; 600_000]).unwrap();
+    let zip = map.join("Mijn map.zip");
+    let n = upload::maak_zip(&bron, "Mijn map", &zip, &bestandsbrug::overdracht::Voortgang::new()).unwrap();
+    assert_eq!(n, 2);
+    let mut a = zip::ZipArchive::new(std::fs::File::open(&zip).unwrap()).unwrap();
+    let mut namen: Vec<String> = (0..a.len()).map(|i| a.by_index(i).unwrap().name().to_string()).collect();
+    namen.sort();
+    assert_eq!(namen, vec!["Mijn map/a.txt", "Mijn map/sub/b.txt"]);
+    assert_eq!(a.by_name("Mijn map/sub/b.txt").unwrap().size(), 600_000);
+    // Een lege map geeft een duidelijke fout.
+    std::fs::create_dir_all(map.join("Leeg")).unwrap();
+    let r = upload::maak_zip(&map.join("Leeg"), "Leeg", &map.join("Leeg.zip"), &bestandsbrug::overdracht::Voortgang::new());
+    assert!(matches!(r, Err(Fout::LegeMap)));
+}
+
+#[test]
+fn nieuwe_bestanden_en_systeembestanden() {
+    let json: serde_json::Value = serde_json::from_str(r#"{"result":0,"metadata":{"contents":[
+        {"name":"desktop.ini","fileid":9,"size":1,"isfolder":false},
+        {"name":"App","folderid":3,"isfolder":true,"contents":[
+            {"name":"App 1.exe","fileid":1,"size":10,"hash":5,"isfolder":false},
+            {"name":"Thumbs.db","fileid":8,"size":1,"isfolder":false}]}]}}"#).unwrap();
+    let l = lijst::lees_inhoud(&json);
+    assert_eq!(l.len(), 1, "desktop.ini en Thumbs.db horen er niet bij");
+    let mut gezien = std::collections::HashSet::new();
+    assert_eq!(lijst::nieuw_sinds(&gezien, &l), vec![0]);
+    gezien.insert(lijst::sleutel(&l[0]));
+    assert!(lijst::nieuw_sinds(&gezien, &l).is_empty());
+    // Hetzelfde bestand, maar vervangen (andere hash): weer nieuw.
+    let mut l2 = l.clone();
+    l2[0].hash = 6;
+    assert_eq!(lijst::nieuw_sinds(&gezien, &l2), vec![0]);
 }

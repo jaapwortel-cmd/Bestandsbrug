@@ -8,7 +8,7 @@ pub const TECHNISCHE_NAAM: &str = "Bestandsbrug";
 
 /// Het versienummer van de app. Dit is de enige plek. bouw-alles.ps1, het installatiebestand en versie.txt
 /// nemen het hier vandaan.
-pub const VERSIE: &str = "1.0.0";
+pub const VERSIE: &str = "1.0.1";
 
 /// Code van de openbare pCloud-map "02 Openbaar" (het stuk achter "code=" in de gedeelde link).
 pub const PCLOUD_DOWNLOAD_CODE: &str = "kZKkpV7ZSEUm89aPdvkSed1XufCjyVpwGCfk";
@@ -59,3 +59,10 @@ pub const STUK_BYTES: usize = 256 * 1024;
 
 /// Achtervoegsel van een half gedownload bestand.
 pub const DEEL_ACHTERVOEGSEL: &str = ".bestandsbrug-deel";
+
+/// Technische namen voor Windows (nooit zichtbaar voor de gebruiker).
+pub const KLASSE_HOOFDVENSTER: &str = "BestandsbrugVenster";
+pub const KLASSE_TEKSTVENSTER: &str = "BestandsbrugTekst";
+pub const MELDING_ID: &str = "Bestandsbrug.melding";
+/// Naam van het losse HTML-bestand.
+pub const HTML_BESTAND: &str = "Bestandsbrug.html";

@@ -2,7 +2,7 @@
 name = "bestandsbrug"
 # Het versienummer staat in src/instellingen.rs (VERSIE). bouw-alles.ps1 zet het hier gelijk;
 # een test controleert dat ze hetzelfde zijn.
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 description = "Bestandsbrug / Filebridge: apps downloaden en bestanden uploaden via pCloud"
 publish = false

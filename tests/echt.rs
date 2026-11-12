@@ -19,9 +19,9 @@ fn echte_lijst_en_download() {
     let l = lijst::haal_lijst().expect("lijst ophalen");
     println!("Lijst opgehaald in {} ms: {} bestanden", t.elapsed().as_millis(), l.len());
     for b in &l {
-        println!("  {} ({} bytes, {})", b.naam, b.grootte, b.gewijzigd);
+        println!("  {} / {} ({} bytes, {})", b.map, b.naam, b.grootte, b.gewijzigd);
     }
-    let b = l.iter().find(|b| b.naam.to_lowercase().contains("paper pilot")).or(l.first()).expect("een bestand");
+    let b = l.iter().find(|b| b.naam.to_lowercase().contains("paper pilot") && b.naam.ends_with(".exe")).or(l.first()).expect("een bestand");
     let doel = map.join(&b.naam);
     let v = Voortgang::new();
     let t = Instant::now();
@@ -48,4 +48,23 @@ fn echte_upload() {
     let s = t.elapsed().as_secs_f64();
     let n = std::fs::metadata(&pad).unwrap().len();
     println!("Upload: {} bytes in {:.2} s = {:.1} MB/s", n, s, n as f64 / s / 1_048_576.0);
+}
+
+#[test]
+#[ignore]
+fn echte_map_downloaden() {
+    let map = hulp::eigen_map("echt-map");
+    let l = lijst::haal_lijst().expect("lijst ophalen");
+    let naam = "Paper Pilot";
+    let doel = map.join(naam);
+    let bestanden = download::bestanden_in_map(&l, naam, &doel);
+    assert!(!bestanden.is_empty(), "map {naam} niet gevonden");
+    let v = Voortgang::new();
+    let t = Instant::now();
+    download::download_map(&bestanden, &v).expect("map downloaden");
+    for (b, plek) in &bestanden {
+        assert_eq!(std::fs::metadata(plek).unwrap().len(), b.grootte);
+    }
+    assert_eq!(v.gedaan(), v.totaal());
+    println!("Map {naam}: {} bestanden, {} bytes in {:.2} s", bestanden.len(), v.totaal(), t.elapsed().as_secs_f64());
 }
