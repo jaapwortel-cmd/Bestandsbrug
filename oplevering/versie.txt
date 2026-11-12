@@ -1,0 +1,15 @@
+﻿versie = 1.0.1
+bestand = Bestandsbrug-Setup.exe
+sha256 = e94b7cc7ae5fb9ed3879f341c84faaa0cbc4a4400ecd7b12480d24e55661b2f9
+nieuw_nl = De apps staan nu in mappen, zoals in de Verkenner. Enter opent een map; Backspace gaat terug naar de map erboven.
+nieuw_nl = Een hele map kopiëren: kies de map en de knop Downloaden (of Ctrl+C). Alle bestanden en mappen erin komen mee.
+nieuw_nl = Een hele map uploaden: kies Map kiezen en daarna Uploaden. De map komt bij Jaap als één zip-bestand met alles erin.
+nieuw_nl = Bij het opstarten hoor je wat er nieuw is sinds de vorige keer. In de lijst staat er "nieuw" bij.
+nieuw_nl = Verborgen bestanden van Windows (zoals desktop.ini) staan niet meer in de lijst.
+nieuw_nl = Een foutmelding tijdens het installeren is opgelost.
+nieuw_en = The apps are now in folders, like in File Explorer. Enter opens a folder; Backspace goes back to the folder above.
+nieuw_en = Copy a whole folder: choose the folder and the Download button (or Ctrl+C). All files and folders in it come along.
+nieuw_en = Upload a whole folder: choose Choose folder and then Upload. The folder reaches Jaap as one zip file with everything in it.
+nieuw_en = When starting, you hear what is new since last time. The list says "new" next to it.
+nieuw_en = Hidden Windows files (such as desktop.ini) are no longer in the list.
+nieuw_en = An error message during installation has been fixed.

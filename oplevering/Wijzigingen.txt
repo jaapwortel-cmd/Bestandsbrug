@@ -1,0 +1,22 @@
+﻿WIJZIGINGEN / CHANGES - Bestandsbrug (Filebridge)
+Per versie een regel "nl:" (Nederlands) en "en:" (English). Mag vaker. bouw-alles.ps1 zet deze regels in versie.txt.
+
+Versie 1.0.1 (12 november 2026)
+nl: De apps staan nu in mappen, zoals in de Verkenner. Enter opent een map; Backspace gaat terug naar de map erboven.
+nl: Een hele map kopiëren: kies de map en de knop Downloaden (of Ctrl+C). Alle bestanden en mappen erin komen mee.
+nl: Een hele map uploaden: kies Map kiezen en daarna Uploaden. De map komt bij Jaap als één zip-bestand met alles erin.
+nl: Bij het opstarten hoor je wat er nieuw is sinds de vorige keer. In de lijst staat er "nieuw" bij.
+nl: Verborgen bestanden van Windows (zoals desktop.ini) staan niet meer in de lijst.
+nl: Een foutmelding tijdens het installeren is opgelost.
+en: The apps are now in folders, like in File Explorer. Enter opens a folder; Backspace goes back to the folder above.
+en: Copy a whole folder: choose the folder and the Download button (or Ctrl+C). All files and folders in it come along.
+en: Upload a whole folder: choose Choose folder and then Upload. The folder reaches Jaap as one zip file with everything in it.
+en: When starting, you hear what is new since last time. The list says "new" next to it.
+en: Hidden Windows files (such as desktop.ini) are no longer in the list.
+en: An error message during installation has been fixed.
+
+Versie 1.0.0 (11 november 2026)
+nl: Eerste versie. Apps van Jaap downloaden en bestanden naar Jaap sturen, via pCloud.
+nl: Voortgang elke 6 seconden, lichte en donkere weergave, Nederlands en Engels.
+en: First version. Download Jaap's apps and send files to Jaap, through pCloud.
+en: Progress every 6 seconds, light and dark view, Dutch and English.
