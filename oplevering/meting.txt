@@ -1,0 +1,9 @@
+Ronde 1: klaar voor invoer na 100 ms
+Window shown after 52 ms
+List from internet after 855 ms
+Ronde 2: klaar voor invoer na 73 ms
+Window shown after 54 ms
+List from internet after 685 ms
+Ronde 3: klaar voor invoer na 77 ms
+Window shown after 54 ms
+List from internet after 684 ms

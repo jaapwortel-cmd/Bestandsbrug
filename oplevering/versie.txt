@@ -1,0 +1,9 @@
+﻿versie = 1.0.2
+bestand = Bestandsbrug-Setup.exe
+sha256 = 589f14a9a7d66e435807e3a32db98c5c19de015d36221862696a78a5b73aa045
+nieuw_nl = Programma's die al op je computer staan, krijgen "geïnstalleerd" en hun versie in de lijst. Is er een nieuwere versie, dan heet de knop Downloaden "Bijwerken": die downloadt en start de nieuwe installatie.
+nieuw_nl = Nieuwe knop Openen: start het programma van de gekozen map.
+nieuw_nl = Bij Uploaden staat nu wat je kunt sturen, en dat grote bestanden ook mogen.
+nieuw_en = Programs that are already on your computer show "installed" and their version in the list. If there is a newer version, the Download button is called "Update": it downloads and starts the new installation.
+nieuw_en = New Open button: starts the program of the chosen folder.
+nieuw_en = The Upload tab now says what you can send, and that large files are fine too.

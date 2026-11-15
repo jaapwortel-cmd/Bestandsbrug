@@ -1,0 +1,27 @@
+﻿Programma: Bestandsbrug.exe, venster "Filebridge"
+
+1. Namen van de onderdelen
+Bekeken: 23 onderdelen.
+
+2. Tab-volgorde
+  Tab 1: Button "Download" [id 13] {Button}
+  Tab 2: Button "Open" [id 16] {Button}
+  Tab 3: Button "Up one folder (Backspace)" [id 15] {Button}
+  Tab 4: Button "Refresh list" [id 14] {Button}
+  Tab 5: Document "Message" [id 33] {Edit}
+  Tab 6: TabItem "Download"
+  Tab 7: ListItem "Bestandsbrug" [id ListViewItem-0]
+  Tab 8: Button "Download" [id 13] {Button}
+  Na 7 onderdelen ben je weer bij het begin: goed.
+
+3. Menu's
+  Menu 1 "File": 0 regels
+FOUT: Menu "File" ging niet open of heeft geen regels.
+  Menu 2 "Language": 0 regels
+FOUT: Menu "Language" ging niet open of heeft geen regels.
+  Menu 3 "Accessibility": 0 regels
+FOUT: Menu "Accessibility" ging niet open of heeft geen regels.
+  Menu 4 "Help": 0 regels
+FOUT: Menu "Help" ging niet open of heeft geen regels.
+
+Toegankelijkheid: 4 dingen om te verbeteren.
