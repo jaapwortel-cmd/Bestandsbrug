@@ -148,6 +148,9 @@ fn bericht(h: HWND, msg: u32, wp: WPARAM, lp: LPARAM) -> Option<LRESULT> {
                 if !f.is_invalid() && unsafe { IsChild(h, f) }.as_bool() {
                     met(|s| s.laatste_focus = f);
                 }
+            } else {
+                // Terug in de app (bijvoorbeeld na een installatie): kijk of er programma's bij of af zijn.
+                scherm_download::programmas_bijwerken();
             }
             None
         }
@@ -239,7 +242,8 @@ pub fn opdracht(id: u16) {
     use hoofdscherm as hs;
     use menu as m;
     match id {
-        hs::ID_KNOP_DOWNLOAD | m::ID_DOWNLOADEN => scherm_download::start_download(),
+        hs::ID_KNOP_DOWNLOAD | m::ID_DOWNLOADEN => scherm_download::knop_download(),
+        hs::ID_KNOP_OPENEN => scherm_download::open_programma(),
         hs::ID_KNOP_VERNIEUWEN | m::ID_VERNIEUWEN => scherm_download::vernieuw(true),
         hs::ID_KNOP_OMHOOG => verkenner::omhoog(),
         hs::ID_KNOP_KIEZEN | m::ID_UPLOAD_KIEZEN => {

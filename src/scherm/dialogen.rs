@@ -87,10 +87,17 @@ pub fn kies_openen() -> Option<PathBuf> {
 
 /// Opent een bestand of programma met Windows. Geeft true als het lukte.
 pub fn open(bestand: &str, parameters: &str) -> bool {
+    open_in(bestand, parameters, "")
+}
+
+/// Zoals `open`, maar met een werkmap (een programma starten in zijn eigen map).
+pub fn open_in(bestand: &str, parameters: &str, werkmap: &str) -> bool {
     let b = ws(bestand);
     let p = ws(parameters);
+    let w = ws(werkmap);
     let open = ws("open");
-    let r = unsafe { ShellExecuteW(Some(hwnd()), pc(&open), pc(&b), if parameters.is_empty() { PCWSTR::null() } else { pc(&p) }, PCWSTR::null(), SW_SHOWNORMAL) };
+    let leeg_of = |s: &str, v: &[u16]| if s.is_empty() { PCWSTR::null() } else { pc(v) };
+    let r = unsafe { ShellExecuteW(Some(hwnd()), pc(&open), pc(&b), leeg_of(parameters, &p), leeg_of(werkmap, &w), SW_SHOWNORMAL) };
     r.0 as isize > 32
 }
 

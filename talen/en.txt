@@ -40,7 +40,7 @@ KolomUitleg = Description
 KnopDownloaden = &Download
 KnopVernieuwen = &Refresh list
 UploadUitlegNaam = About uploading
-UploadUitleg = Here you can send a file or a whole folder to Jaap. First choose a file or a folder. Then choose Upload.\nYou cannot see files from other people. Only Jaap can see them.
+UploadUitleg = Here you can send a file or a whole folder to Jaap. First choose a file or a folder. Then choose Upload.\nWhat can you send? For example the log file when a program does something wrong, a screenshot or an error message, or music and recordings for the radio. Large files are fine too, but then leave the computer on until it is done.\nYou cannot see files from other people. Only Jaap can see them.
 KnopKiezen = &Choose file
 KnopUploaden = &Upload
 GekozenNaam = Chosen file
@@ -210,3 +210,16 @@ SoortNieuw = {0}, new
 NieuwSinds = New since last time: {0}.
 NieuwInMap = {0} in the folder {1}
 NieuwVeel = There are {0} new files since last time. The list says new next to them.
+
+# Installed programs: Update and Open (wish from Marcel, 15 Nov 2026)
+KnopBijwerken = &Update
+KnopOpenen = &Open
+SoortGeinstalleerd = {0}, installed
+SoortGeinstalleerdVersie = {0}, installed (version {1})
+SoortNieuweVersie = {0}, installed, new version {1}
+OpenenGeenProgramma = First choose the folder of a program in the list. Then choose Open.
+OpenenNietGeinstalleerd = This program is not on your computer yet. Choose Download to install it.
+OpenenNietGevonden = {0} is on your computer, but {naam} cannot start it. Start it from the Start menu.
+OpenenGestart = Starting {0}.
+MeldInstallatieGestart = Download finished. The installation of {0} starts now. Follow the steps of the installer.
+MeldInstallatieFout = {0} has been saved in the folder {1}, but the installation could not start. Open the file yourself in File Explorer.

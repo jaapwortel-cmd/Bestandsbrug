@@ -18,7 +18,8 @@ use windows::Win32::UI::WindowsAndMessaging::*;
 use super::*;
 
 pub enum Taak {
-    Download { bestand: Bestand, doel: PathBuf },
+    /// `starten` = na de download het bestand starten (Bijwerken: het installatieprogramma).
+    Download { bestand: Bestand, doel: PathBuf, starten: bool },
     Upload { pad: PathBuf, grootte: u64 },
     Update { info: VersieInfo, bron: Bron },
     /// Een hele map uploaden (als één zip-bestand met alles erin).
@@ -78,7 +79,7 @@ pub fn start(taak: Taak, naam: String) {
     let nummer = NUMMER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let h = hwnd();
     let werk: Box<dyn FnOnce(&Voortgang) -> Uitkomst<Option<PathBuf>> + Send> = match &taak {
-        Taak::Download { bestand, doel } => {
+        Taak::Download { bestand, doel, .. } => {
             let (b, d) = (bestand.clone(), doel.clone());
             log::info(&format!("Download start: {} ({} bytes)", b.naam, b.grootte));
             Box::new(move |v| bestandsbrug::pcloud::download::download(&b, &d, v).map(|_| None))
@@ -178,7 +179,7 @@ pub fn klaar(k: Klaar) {
         Err(_) => {}
     }
     match (l.taak, k.uitkomst) {
-        (Taak::Download { bestand, doel }, uitkomst) => download_klaar(bestand, doel, uitkomst.map(|_| ())),
+        (Taak::Download { bestand, doel, starten }, uitkomst) => download_klaar(bestand, doel, starten, uitkomst.map(|_| ())),
         (Taak::Upload { grootte, .. }, uitkomst) => match uitkomst {
             Ok(_) => {
                 log::info(&format!("Upload done: {} ({} bytes)", l.naam, grootte));
@@ -234,14 +235,23 @@ pub fn klaar(k: Klaar) {
     na_overdracht();
 }
 
-fn download_klaar(b: Bestand, doel: PathBuf, uitkomst: Uitkomst<()>) {
+fn download_klaar(b: Bestand, doel: PathBuf, starten: bool, uitkomst: Uitkomst<()>) {
     let onderbroken = Onderbroken { fileid: b.fileid, naam: b.naam.clone(), grootte: b.grootte, hash: b.hash, doel: doel.clone() };
     match uitkomst {
         Ok(()) => {
             overdracht::verwijder(&doel);
             log::info(&format!("Download done: {} ({} bytes)", b.naam, b.grootte));
             let map = doel.parent().and_then(|p| p.file_name()).map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
-            zeg(&f("MeldDownloadKlaar", &[&b.naam, &map]), Belang::Belangrijk);
+            if !starten {
+                zeg(&f("MeldDownloadKlaar", &[&b.naam, &map]), Belang::Belangrijk);
+            } else if super::dialogen::open(&doel.to_string_lossy(), "") {
+                // Bijwerken: het installatieprogramma meteen starten.
+                log::info(&format!("Installer started: {}", b.naam));
+                zeg(&f("MeldInstallatieGestart", &[&b.naam]), Belang::Belangrijk);
+            } else {
+                log::fout(&format!("Installer could not start: {}", b.naam));
+                zeg(&f("MeldInstallatieFout", &[&b.naam, &map]), Belang::Belangrijk);
+            }
         }
         Err(Fout::Gestopt(Stop::Pauze)) => {
             log::info(&format!("Download paused: {} at {}%", b.naam, onderbroken.procent()));
@@ -334,7 +344,7 @@ pub fn afsluiten() {
 pub fn windows_stopt() {
     let info = met(|s| {
         s.lopend.as_ref().and_then(|l| match &l.taak {
-            Taak::Download { bestand, doel } => {
+            Taak::Download { bestand, doel, .. } => {
                 l.v.vraag_stop(Stop::Pauze);
                 Some(Onderbroken { fileid: bestand.fileid, naam: bestand.naam.clone(), grootte: bestand.grootte, hash: bestand.hash, doel: doel.clone() })
             }

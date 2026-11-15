@@ -40,7 +40,7 @@ KolomUitleg = Uitleg
 KnopDownloaden = &Downloaden
 KnopVernieuwen = Lijst &vernieuwen
 UploadUitlegNaam = Uitleg over uploaden
-UploadUitleg = Hier kun je een bestand of een hele map naar Jaap sturen. Kies eerst een bestand of een map. Kies daarna Uploaden.\nJe kunt de bestanden van anderen niet zien. Alleen Jaap ziet ze.
+UploadUitleg = Hier kun je een bestand of een hele map naar Jaap sturen. Kies eerst een bestand of een map. Kies daarna Uploaden.\nWat kun je sturen? Bijvoorbeeld het logboek als een programma iets fout doet, een schermafbeelding of een foutmelding, of muziek en opnames voor de radio. Grote bestanden mogen ook, maar laat de computer dan aan tot het klaar is.\nJe kunt de bestanden van anderen niet zien. Alleen Jaap ziet ze.
 KnopKiezen = Bestand &kiezen
 KnopUploaden = &Uploaden
 GekozenNaam = Gekozen bestand
@@ -210,3 +210,16 @@ SoortNieuw = {0}, nieuw
 NieuwSinds = Nieuw sinds de vorige keer: {0}.
 NieuwInMap = {0} in de map {1}
 NieuwVeel = Er zijn {0} nieuwe bestanden sinds de vorige keer. In de lijst staat er nieuw bij.
+
+# Geïnstalleerde programma's: Bijwerken en Openen (wens van Marcel, 15 nov 2026)
+KnopBijwerken = B&ijwerken
+KnopOpenen = O&penen
+SoortGeinstalleerd = {0}, geïnstalleerd
+SoortGeinstalleerdVersie = {0}, geïnstalleerd (versie {1})
+SoortNieuweVersie = {0}, geïnstalleerd, nieuwe versie {1}
+OpenenGeenProgramma = Kies eerst de map van een programma in de lijst. Kies daarna Openen.
+OpenenNietGeinstalleerd = Dit programma staat nog niet op je computer. Kies Downloaden om het te installeren.
+OpenenNietGevonden = {0} staat op je computer, maar {naam} kan het niet starten. Start het via het menu Start.
+OpenenGestart = {0} wordt gestart.
+MeldInstallatieGestart = Klaar met downloaden. De installatie van {0} start nu. Volg de stappen van het installatieprogramma.
+MeldInstallatieFout = {0} is opgeslagen in de map {1}, maar de installatie kon niet starten. Open het bestand zelf in de Verkenner.

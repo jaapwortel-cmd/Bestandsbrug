@@ -7,9 +7,12 @@ With {naam} you can download Jaap's apps. You can also send a file to Jaap (uplo
 Go to the Download tab. It works like File Explorer in Windows. First you see the folders, one for each app. Use the up and down arrows to move. Press Enter to open a folder. The files are inside. Press Backspace (or the Up one folder button) to go back to the folder above. Choose a file and press Enter, or choose the Download button.
 To copy a whole folder to your computer: choose the folder (without opening it) and choose the Download button, or press Ctrl+C. Then choose where the folder should go. The folder appears there with all its files and folders. Choose where you want to save the file. By default this is the Downloads folder.
 Press F5 to get the list again. If something is new in the list since last time, you hear it when starting. The Type column then says "new", also next to the folder it is in.
+Do you already have one of Jaap's programs on your computer? Then the Type column of its folder says "installed", with the version. If there is a newer version on pCloud, you hear "new version" and the Download button is called "Update" (Alt+U). Update downloads the newest installer to the Downloads folder and starts it right away. Then follow the steps of the installer.
+With the Open button (Alt+O), right after the Download button, you start the program of the chosen folder. If the program is not on your computer yet, you will hear that. Then choose Download to install it. Update and Open are only in the program, not in the HTML file.
 
 3. Send a file to Jaap
 Go to the Upload tab, with Ctrl+Tab or Ctrl+2. Choose Choose file, or Choose folder for a whole folder. Then choose Upload. A whole folder reaches Jaap as one zip file, with all folders and files in it. You hear "Done, thank you!" when it worked. You cannot see files from other people. Only Jaap can see them.
+What can you send? For example the log file when a program does something wrong, a screenshot or an error message, or music and recordings for the radio. Large files are fine too, but then leave the computer on until it is done.
 
 4. The progress
 During a download or upload, you hear every 6 seconds how far it is. For example: Downloading, 40 percent, about 20 seconds left.
@@ -26,6 +29,8 @@ An upload cannot continue later. There you only have Continue and Cancel everyth
 - Enter: open the chosen folder, or download the chosen file.
 - Backspace: go back to the folder above.
 - Ctrl+C or Alt+D: download the chosen file, or copy the chosen folder with everything in it.
+- Alt+U: update (when there is a new version of a program you already have).
+- Alt+O: open the program of the chosen folder.
 - F5: refresh the list.
 - F1: these instructions.
 - Alt+F4: quit {naam}.

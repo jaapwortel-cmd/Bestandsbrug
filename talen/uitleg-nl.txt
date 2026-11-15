@@ -7,9 +7,12 @@ Met {naam} kun je de apps van Jaap downloaden. Je kunt ook een bestand naar Jaap
 Ga naar het tabblad Downloaden. Het werkt zoals de Verkenner van Windows. Je ziet eerst de mappen, één per app. Loop met de pijltjes omhoog en omlaag. Druk op Enter om een map te openen. Daarin staan de bestanden. Met Backspace (of de knop Map omhoog) ga je terug naar de map erboven. Kies een bestand en druk op Enter, of kies de knop Downloaden.
 Een hele map kopiëren naar je computer: kies de map (zonder hem te openen) en kies de knop Downloaden, of druk op Ctrl+C. Kies daarna waar de map moet komen. De map komt daar met alle bestanden en mappen erin. Kies waar je het bestand wilt opslaan. Standaard is dat de map Downloads.
 Met F5 haal je de lijst opnieuw op. Staat er iets nieuws in de lijst sinds de vorige keer, dan hoor je dat bij het opstarten. In de kolom Soort staat dan "nieuw", ook bij de map waar het in staat.
+Heb je een programma van Jaap al op je computer? Dan staat bij de map in de kolom Soort "geïnstalleerd", met de versie. Staat er op pCloud een nieuwere versie, dan hoor je "nieuwe versie" en heet de knop Downloaden "Bijwerken" (Alt+I). Bijwerken downloadt het nieuwste installatieprogramma naar de map Downloads en start het meteen. Volg daarna de stappen van het installatieprogramma.
+Met de knop Openen (Alt+P), direct na de knop Downloaden, start je het programma van de gekozen map. Staat het programma nog niet op je computer, dan hoor je dat. Kies dan Downloaden om het te installeren. Bijwerken en Openen zijn er alleen in het programma, niet in het HTML-bestand.
 
 3. Een bestand naar Jaap sturen
 Ga naar het tabblad Uploaden, met Ctrl+Tab of Ctrl+2. Kies Bestand kiezen, of Map kiezen voor een hele map. Kies daarna Uploaden. Een hele map komt bij Jaap als één zip-bestand, met alle mappen en bestanden erin. Je hoort "Klaar, bedankt!" als het gelukt is. Je kunt de bestanden van anderen niet zien. Alleen Jaap ziet ze.
+Wat kun je sturen? Bijvoorbeeld het logboek als een programma iets fout doet, een schermafbeelding of een foutmelding, of muziek en opnames voor de radio. Grote bestanden mogen ook, maar laat de computer dan aan tot het klaar is.
 
 4. De voortgang
 Tijdens een download of upload hoor je elke 6 seconden hoe ver hij is. Bijvoorbeeld: Downloaden, 40 procent, nog ongeveer 20 seconden.
@@ -26,6 +29,8 @@ Een upload kan niet later verdergaan. Daar heb je alleen Doorgaan en Alles nu an
 - Enter: de gekozen map openen, of het gekozen bestand downloaden.
 - Backspace: terug naar de map erboven.
 - Ctrl+C of Alt+D: het gekozen bestand downloaden, of de gekozen map met alles erin kopiëren.
+- Alt+I: bijwerken (als er een nieuwe versie is van een programma dat je al hebt).
+- Alt+P: het programma van de gekozen map openen.
 - F5: de lijst vernieuwen.
 - F1: deze uitleg.
 - Alt+F4: {naam} afsluiten.

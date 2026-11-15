@@ -6,6 +6,7 @@ use std::cell::RefCell;
 
 use bestandsbrug::opmaak;
 use bestandsbrug::pcloud::lijst::{self, Bestand, Map};
+use bestandsbrug::programmas::{self, Stand};
 use bestandsbrug::taal::{f, t};
 use windows::Win32::Foundation::LPARAM;
 use windows::Win32::UI::Controls::*;
@@ -71,6 +72,19 @@ fn toon(bestanden: &[Bestand], pad: &str, kies: Option<Kies>) {
     let is_nieuw = |b: &Bestand| nieuw.contains(&lijst::sleutel(b));
     let map_nieuw = |p: &str| bestanden.iter().any(|b| (b.map == p || b.map.starts_with(&format!("{p}/"))) && is_nieuw(b));
     let met_nieuw = |soort: String, ja: bool| if ja { f("SoortNieuw", &[&soort]) } else { soort };
+    // In de hoofdmap: staat het programma van deze map al op de computer?
+    let programmas = met(|s| s.programmas.clone()).unwrap_or_default();
+    let met_programma = |soort: String, p: &str| {
+        if !pad.is_empty() {
+            return soort;
+        }
+        match programmas::stand(p, bestanden, &programmas) {
+            Some(Stand { nieuwer: Some((_, v)), .. }) => f("SoortNieuweVersie", &[&soort, &v]),
+            Some(Stand { versie: Some(v), .. }) => f("SoortGeinstalleerdVersie", &[&soort, &v]),
+            Some(_) => f("SoortGeinstalleerd", &[&soort]),
+            None => soort,
+        }
+    };
     let h = lijst_hwnd();
     snd(h, WM_SETREDRAW, 0, 0);
     snd(h, LVM_DELETEALLITEMS, 0, 0);
@@ -78,7 +92,7 @@ fn toon(bestanden: &[Bestand], pad: &str, kies: Option<Kies>) {
     for (i, r) in regels.iter().enumerate() {
         let (naam, soort, grootte, datum, uitleg) = match r {
             Regel::Map { naam, aantal, pad } => {
-                (naam.clone(), met_nieuw(t("SoortMap"), map_nieuw(pad)), f("AantalItems", &[&aantal.to_string()]), String::new(), String::new())
+                (naam.clone(), met_nieuw(met_programma(t("SoortMap"), pad), map_nieuw(pad)), f("AantalItems", &[&aantal.to_string()]), String::new(), String::new())
             }
             Regel::Bestand(j) => {
                 let b = &bestanden[*j];
@@ -116,6 +130,45 @@ fn toon(bestanden: &[Bestand], pad: &str, kies: Option<Kies>) {
     let label = if pad.is_empty() { t("LijstNaam") } else { f("LijstInMap", &[&pad.replace('/', " > ")]) };
     win::zet_tekst(hoofdscherm::onderdelen().lijst_label, &label);
     HUIDIG.with(|x| *x.borrow_mut() = (pad, regels));
+    werk_knoppen_bij();
+}
+
+/// De programmamap (in de hoofdmap) bij wat er gekozen is: de gekozen map in de hoofdmap, of de map
+/// waar je nu in bent (bijvoorbeeld een bestand in "Paper Pilot").
+pub fn programma_map() -> Option<String> {
+    let pad = huidige_map();
+    if !pad.is_empty() {
+        return pad.split('/').next().map(str::to_string);
+    }
+    match keuze() {
+        Some(Regel::Map { naam, .. }) => Some(naam),
+        _ => None,
+    }
+}
+
+/// Bijwerken kan: de gekozen regel is een programmamap in de hoofdmap, het programma staat op de computer en
+/// er is een nieuwer installatiebestand. Geeft (mapnaam, nummer in de lijst, nieuwe versie).
+pub fn bijwerk_info() -> Option<(String, usize, String)> {
+    if !huidige_map().is_empty() {
+        return None;
+    }
+    let Some(Regel::Map { naam, .. }) = keuze() else { return None };
+    let (lijst, ps) = met(|s| (s.lijst.clone(), s.programmas.clone()))?;
+    let (i, v) = programmas::stand(&naam, &lijst, &ps)?.nieuwer?;
+    Some((naam, i, v))
+}
+
+/// De knop Downloaden heet "Bijwerken" als er een nieuwe versie is van een programma dat je al hebt.
+/// Na elke andere keuze in de lijst en na het vernieuwen van de lijst.
+pub fn werk_knoppen_bij() {
+    let o = hoofdscherm::onderdelen();
+    let tekst = if bijwerk_info().is_some() { t("KnopBijwerken") } else { t("KnopDownloaden") };
+    if win::lees_tekst(o.knop_download) != tekst {
+        win::zet_tekst(o.knop_download, &tekst);
+        unsafe {
+            let _ = windows::Win32::Graphics::Gdi::InvalidateRect(Some(o.knop_download), None, true);
+        }
+    }
 }
 
 enum Kies {

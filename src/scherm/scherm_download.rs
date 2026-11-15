@@ -22,13 +22,33 @@ pub fn vul_lijst(lijst: &[Bestand]) {
 /// Bewaar en toon een lijst.
 pub fn toon_lijst(nieuw: Vec<Bestand>, van_internet: bool) {
     let anders = met(|s| s.lijst != nieuw).unwrap_or(true);
-    if anders {
-        vul_lijst(&nieuw);
-    }
-    met(|s| {
-        s.lijst = nieuw;
+    // Eerst bewaren, dan tonen: de knoppen (Bijwerken) kijken naar de bewaarde lijst.
+    let oud = met(|s| {
         s.lijst_van_internet |= van_internet;
-    });
+        std::mem::replace(&mut s.lijst, nieuw.clone())
+    })
+    .unwrap_or_default();
+    if anders {
+        super::verkenner::vul(&nieuw, &oud);
+    }
+}
+
+/// De geïnstalleerde programma's opnieuw lezen. Is er iets veranderd (een programma erbij, een nieuwe versie),
+/// dan de lijst opnieuw tonen, op dezelfde plek.
+pub fn programmas_bijwerken() {
+    let nieuw = super::programmas::lees();
+    let anders = met(|s| {
+        let anders = s.programmas != nieuw;
+        if anders {
+            s.programmas = nieuw;
+        }
+        anders
+    })
+    .unwrap_or(false);
+    if anders {
+        let lijst = met(|s| s.lijst.clone()).unwrap_or_default();
+        super::verkenner::vul(&lijst, &lijst);
+    }
 }
 
 /// Haal de lijst op de achtergrond op. `handmatig` = de gebruiker vroeg erom (F5 of de knop).
@@ -72,6 +92,7 @@ pub fn lijst_klaar(uitkomst: Uitkomst<Vec<Bestand>>, handmatig: bool) {
                 delen.push(nieuws_tekst(&nieuw, &erbij));
             }
             toon_lijst(nieuw, true);
+            programmas_bijwerken();
             // Een korte melding; de focus blijft waar hij is.
             if !delen.is_empty() {
                 zeg(&delen.join(" "), if handmatig { Belang::Belangrijk } else { Belang::Gewoon });
@@ -144,7 +165,62 @@ pub fn start_download() {
         return;
     }
     let naam = b.naam.clone();
-    overdracht_ui::start(Taak::Download { bestand: b, doel }, naam);
+    overdracht_ui::start(Taak::Download { bestand: b, doel, starten: false }, naam);
+}
+
+/// De knop Downloaden (of het menu): heet de knop nu Bijwerken, dan de nieuwe versie installeren;
+/// anders gewoon downloaden. (Ctrl+C kopieert altijd het bestand of de hele map.)
+pub fn knop_download() {
+    match super::verkenner::bijwerk_info() {
+        Some((map, i, versie)) => bijwerken(&map, i, &versie),
+        None => start_download(),
+    }
+}
+
+/// Bijwerken: het nieuwste installatiebestand downloaden naar de map Downloads (zonder te vragen waar) en
+/// het daarna starten.
+fn bijwerken(map: &str, i: usize, versie: &str) {
+    if overdracht_ui::bezig() {
+        zeg(&t("AlBezig"), Belang::Belangrijk);
+        return;
+    }
+    let Some(b) = met(|s| s.lijst.get(i).cloned()).flatten() else {
+        zeg(&t("GeenKeuze"), Belang::Belangrijk);
+        return;
+    };
+    let doel = dialogen::downloads_map().join(bestandsbrug::pcloud::download::veilige_naam(&b.naam));
+    if doel.exists() && !vragen::ja_nee(hwnd(), &f("Overschrijven", &[&b.naam]), false) {
+        return;
+    }
+    log::info(&format!("Update program: {map} to {versie}"));
+    let naam = b.naam.clone();
+    overdracht_ui::start(Taak::Download { bestand: b, doel, starten: true }, naam);
+}
+
+/// De knop Openen: het programma van de gekozen map starten, als het op de computer staat.
+pub fn open_programma() {
+    let Some(map) = super::verkenner::programma_map() else {
+        zeg(&t("OpenenGeenProgramma"), Belang::Belangrijk);
+        return;
+    };
+    let ps = met(|s| s.programmas.clone()).unwrap_or_default();
+    let Some(p) = bestandsbrug::programmas::zoek_programma(&map, &ps) else {
+        zeg(&t("OpenenNietGeinstalleerd"), Belang::Belangrijk);
+        return;
+    };
+    let Some(exe) = super::programmas::start_pad(p, &map) else {
+        log::fout(&format!("Program not found: {map}"));
+        zeg(&f("OpenenNietGevonden", &[&map]), Belang::Belangrijk);
+        return;
+    };
+    let werkmap = exe.parent().map(|m| m.to_string_lossy().to_string()).unwrap_or_default();
+    if dialogen::open_in(&exe.to_string_lossy(), "", &werkmap) {
+        log::info(&format!("Program started: {map}"));
+        zeg(&f("OpenenGestart", &[&map]), Belang::Belangrijk);
+    } else {
+        log::fout(&format!("Program could not start: {map}"));
+        zeg(&f("OpenenNietGevonden", &[&map]), Belang::Belangrijk);
+    }
 }
 
 /// Een hele map kopiëren: kies waar hij komt (standaard Downloads); daar komt de map met alles erin.
@@ -185,7 +261,7 @@ fn vraag_onderbroken() {
         match vragen::vraag(hwnd(), &bestandsbrug::taal::app_naam(), &tekst, "", &knoppen, JA, Some(LATER)) {
             JA => {
                 log::info(&format!("Resume download: {}", o.naam));
-                overdracht_ui::start(Taak::Download { bestand: b.clone(), doel: o.doel.clone() }, b.naam.clone());
+                overdracht_ui::start(Taak::Download { bestand: b.clone(), doel: o.doel.clone(), starten: false }, b.naam.clone());
             }
             WEG => {
                 overdracht::gooi_weg(&o);

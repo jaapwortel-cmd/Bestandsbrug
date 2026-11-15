@@ -135,3 +135,21 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
   Bestandsbrug.html, "Over Bestandsbrug - About Filebridge.txt" en de twee privacybestanden (geen versie.txt). Installatiefout "Cannot focus a disabled or
   invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
 - Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).
+
+## Opmerkingen van Marcel (tester, 15 nov 2026) - gedaan op 15 nov, nog door Jaap te testen met JAWS
+1. GEDAAN (Bijwerken). `src/programmas.rs` (kern, getest in tests/programmas.rs) en `src/scherm/programmas.rs` (register).
+   Gelezen: Uninstall\*_is1 in HKCU, HKCU\WOW6432Node en HKLM (64 en 32 bit): DisplayName, DisplayVersion,
+   InstallLocation, DisplayIcon. Een map in de hoofdmap hoort bij een programma als DisplayName gelijk is aan de mapnaam
+   of ermee begint gevolgd door een versie/haakje (niet hoofdlettergevoelig). Nieuwste installatie = .exe met "install"
+   of "setup" in de naam en het hoogste versienummer in de naam (per deel als getal). Kolom Soort: "Map, geïnstalleerd
+   (versie X)" of "Map, geïnstalleerd, nieuwe versie Y". Dan heet de knop Downloaden "B&ijwerken" (Alt+I; niet Alt+B,
+   dat is het menu Bestand): downloaden naar Downloads zonder opslaan-venster, daarna starten met dialogen::open.
+   Ctrl+C kopieert nog steeds de hele map. Bestandsbrug-Setup.exe heeft geen versie in de naam: versie.txt in die map
+   wordt NIET gelezen (dan geen Bijwerken). Het register wordt opnieuw gelezen na het vernieuwen van de lijst en als het
+   venster weer actief wordt (na een installatie).
+2. GEDAAN (Openen): knop "O&penen" (Alt+P; Alt+O is het menu Toegankelijkheid) direct na Downloaden. Start DisplayIcon
+   (zonder ",0" en aanhalingstekens) als dat een .exe is, anders de .exe in InstallLocation die bij de naam past.
+   Niet geïnstalleerd: een melding. Werkt ook in een programmamap. "Na een gewone download de installatie aanbieden" is
+   NIET gedaan (alleen Bijwerken start de installatie).
+3. GEDAAN: UploadUitleg (nl/en; de HTML haalt die tekst uit de taalbestanden) en uitleg-nl/en.txt zeggen nu wat je kunt
+   sturen en dat grote bestanden mogen. Het uitlegvak op het tabblad Uploaden is iets hoger gemaakt.

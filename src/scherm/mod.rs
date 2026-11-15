@@ -7,6 +7,7 @@ mod dialogen;
 mod hoofdscherm;
 mod menu;
 mod overdracht_ui;
+mod programmas;
 mod scherm_download;
 mod scherm_upload;
 mod spraak;
@@ -79,6 +80,8 @@ pub struct Staat {
     pub laatste_focus: HWND,
     /// Bestanden die nieuw zijn sinds de vorige keer (lijst::sleutel); in de lijst staat er "nieuw" bij.
     pub nieuw: std::collections::HashSet<String>,
+    /// De programma's die op de computer staan (uit het register), voor "geïnstalleerd", Bijwerken en Openen.
+    pub programmas: Vec<bestandsbrug::programmas::Geinstalleerd>,
 }
 
 thread_local! {
@@ -218,6 +221,7 @@ pub fn start() -> i32 {
             metingen: Vec::new(),
             laatste_focus: HWND::default(),
             nieuw: Default::default(),
+            programmas: programmas::lees(),
         })
     });
     hoofdscherm::maak_onderdelen(h);

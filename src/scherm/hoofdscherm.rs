@@ -20,6 +20,7 @@ pub const ID_LIJST: u16 = 12;
 pub const ID_KNOP_DOWNLOAD: u16 = 13;
 pub const ID_KNOP_VERNIEUWEN: u16 = 14;
 pub const ID_KNOP_OMHOOG: u16 = 15;
+pub const ID_KNOP_OPENEN: u16 = 16;
 pub const ID_UPLOAD_UITLEG_LABEL: u16 = 20;
 pub const ID_UPLOAD_UITLEG: u16 = 21;
 pub const ID_KNOP_KIEZEN: u16 = 22;
@@ -43,6 +44,7 @@ pub struct Onderdelen {
     pub lijst_label: HWND,
     pub lijst: HWND,
     pub knop_download: HWND,
+    pub knop_openen: HWND,
     pub knop_vernieuwen: HWND,
     pub knop_omhoog: HWND,
     pub upload_uitleg_label: HWND,
@@ -59,14 +61,14 @@ pub struct Onderdelen {
 }
 
 impl Onderdelen {
-    fn download_pagina(&self) -> [HWND; 5] {
-        [self.lijst_label, self.lijst, self.knop_download, self.knop_omhoog, self.knop_vernieuwen]
+    fn download_pagina(&self) -> [HWND; 6] {
+        [self.lijst_label, self.lijst, self.knop_download, self.knop_openen, self.knop_omhoog, self.knop_vernieuwen]
     }
     fn upload_pagina(&self) -> [HWND; 7] {
         [self.upload_uitleg_label, self.upload_uitleg, self.knop_kiezen, self.knop_map_kiezen, self.gekozen_label, self.gekozen, self.knop_upload]
     }
-    pub fn knoppen(&self) -> [HWND; 6] {
-        [self.knop_download, self.knop_omhoog, self.knop_vernieuwen, self.knop_kiezen, self.knop_map_kiezen, self.knop_upload]
+    pub fn knoppen(&self) -> [HWND; 7] {
+        [self.knop_download, self.knop_openen, self.knop_omhoog, self.knop_vernieuwen, self.knop_kiezen, self.knop_map_kiezen, self.knop_upload]
     }
 }
 
@@ -98,6 +100,7 @@ pub fn maak_onderdelen(h: HWND) {
             ID_LIJST,
         ),
         knop_download: m("BUTTON", KNOP, 0, ID_KNOP_DOWNLOAD),
+        knop_openen: m("BUTTON", KNOP, 0, ID_KNOP_OPENEN),
         knop_omhoog: m("BUTTON", KNOP, 0, ID_KNOP_OMHOOG),
         knop_vernieuwen: m("BUTTON", KNOP, 0, ID_KNOP_VERNIEUWEN),
         upload_uitleg_label: m("STATIC", LABEL, 0, ID_UPLOAD_UITLEG_LABEL),
@@ -154,6 +157,7 @@ pub fn zet_teksten() {
         snd(o.lijst, LVM_SETCOLUMNW, i, &kol as *const _ as isize);
     }
     win::zet_tekst(o.knop_download, &t("KnopDownloaden"));
+    win::zet_tekst(o.knop_openen, &t("KnopOpenen"));
     win::zet_tekst(o.knop_vernieuwen, &t("KnopVernieuwen"));
     win::zet_tekst(o.knop_omhoog, &t("KnopOmhoog"));
     win::zet_tekst(o.upload_uitleg_label, &t("UploadUitlegNaam"));
@@ -179,7 +183,7 @@ pub fn pas_thema_toe() {
     let th = thema::huidig();
     let donker = th.weergave == Weergave::Donker && !th.hoog_contrast;
     let alle = [
-        o.tab, o.lijst_label, o.lijst, o.knop_download, o.knop_omhoog, o.knop_vernieuwen, o.upload_uitleg_label, o.upload_uitleg, o.knop_kiezen, o.knop_map_kiezen,
+        o.tab, o.lijst_label, o.lijst, o.knop_download, o.knop_openen, o.knop_omhoog, o.knop_vernieuwen, o.upload_uitleg_label, o.upload_uitleg, o.knop_kiezen, o.knop_map_kiezen,
         o.gekozen_label, o.gekozen, o.knop_upload, o.voortgang_label, o.balk, o.melding_label, o.melding,
     ];
     for h in alle {
@@ -277,11 +281,14 @@ pub fn indeling() {
     let knop_y = p.bottom - m - knop_h;
     let lijst_y = p.top + m + regel + m / 3;
     win::verplaats(o.lijst, x, lijst_y, b, knop_y - m - lijst_y);
-    let b1 = knop_b(o.knop_download);
+    // De knop Downloaden kan ook "Bijwerken" heten: breed genoeg voor allebei, zodat er niets verschuift.
+    let b1 = ["KnopDownloaden", "KnopBijwerken"].iter().map(|k| tekstbreedte(&t(k), th.letter_vet)).max().unwrap_or(100) + regel * 2;
     win::verplaats(o.knop_download, x, knop_y, b1, knop_h);
+    let bo = knop_b(o.knop_openen);
+    win::verplaats(o.knop_openen, x + b1 + m, knop_y, bo, knop_h);
     let b2 = knop_b(o.knop_omhoog);
-    win::verplaats(o.knop_omhoog, x + b1 + m, knop_y, b2, knop_h);
-    win::verplaats(o.knop_vernieuwen, x + b1 + b2 + 2 * m, knop_y, knop_b(o.knop_vernieuwen), knop_h);
+    win::verplaats(o.knop_omhoog, x + b1 + bo + 2 * m, knop_y, b2, knop_h);
+    win::verplaats(o.knop_vernieuwen, x + b1 + bo + b2 + 3 * m, knop_y, knop_b(o.knop_vernieuwen), knop_h);
     let lb = b - regel;
     for (i, deel) in [40, 10, 14, 22, 14].iter().enumerate() {
         snd(o.lijst, LVM_SETCOLUMNWIDTH, i, (lb * deel / 100) as isize);
@@ -291,7 +298,7 @@ pub fn indeling() {
     let mut y = p.top + m;
     win::verplaats(o.upload_uitleg_label, x, y, b, regel);
     y += regel + m / 3;
-    let uitleg_h = regel * 3 + m;
+    let uitleg_h = regel * 5 + m;
     win::verplaats(o.upload_uitleg, x, y, b, uitleg_h);
     y += uitleg_h + m;
     let bk = knop_b(o.knop_kiezen);
@@ -402,6 +409,14 @@ pub fn melding_van_onderdeel(kop: &NMHDR, lp: LPARAM) -> Option<LRESULT> {
     // Dubbelklik = hetzelfde als Enter (map openen of bestand downloaden).
     if kop.hwndFrom == o.lijst && kop.code == NM_DBLCLK {
         super::scherm_download::enter_in_lijst();
+        return Some(LRESULT(0));
+    }
+    // Een andere regel gekozen: de knop Downloaden kan "Bijwerken" worden (en terug).
+    if kop.hwndFrom == o.lijst && kop.code == LVN_ITEMCHANGED {
+        let nm = unsafe { &*(lp.0 as *const NMLISTVIEW) };
+        if (nm.uNewState ^ nm.uOldState) & LVIS_SELECTED.0 != 0 {
+            super::verkenner::werk_knoppen_bij();
+        }
         return Some(LRESULT(0));
     }
     let _ = lp;

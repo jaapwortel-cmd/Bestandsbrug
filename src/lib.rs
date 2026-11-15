@@ -12,6 +12,7 @@ pub mod opmaak;
 pub mod overdracht;
 pub mod paden;
 pub mod pcloud;
+pub mod programmas;
 pub mod taal;
 pub mod tijd;
 pub mod update;

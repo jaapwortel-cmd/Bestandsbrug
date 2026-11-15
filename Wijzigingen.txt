@@ -1,6 +1,14 @@
 WIJZIGINGEN / CHANGES - Bestandsbrug (Filebridge)
 Per versie een regel "nl:" (Nederlands) en "en:" (English). Mag vaker. bouw-alles.ps1 zet deze regels in versie.txt.
 
+Versie 1.0.2 (15 november 2026)
+nl: Programma's die al op je computer staan, krijgen "geïnstalleerd" en hun versie in de lijst. Is er een nieuwere versie, dan heet de knop Downloaden "Bijwerken": die downloadt en start de nieuwe installatie.
+nl: Nieuwe knop Openen: start het programma van de gekozen map.
+nl: Bij Uploaden staat nu wat je kunt sturen, en dat grote bestanden ook mogen.
+en: Programs that are already on your computer show "installed" and their version in the list. If there is a newer version, the Download button is called "Update": it downloads and starts the new installation.
+en: New Open button: starts the program of the chosen folder.
+en: The Upload tab now says what you can send, and that large files are fine too.
+
 Versie 1.0.1 (12 november 2026)
 nl: De apps staan nu in mappen, zoals in de Verkenner. Enter opent een map; Backspace gaat terug naar de map erboven.
 nl: Een hele map kopiëren: kies de map en de knop Downloaden (of Ctrl+C). Alle bestanden en mappen erin komen mee.
