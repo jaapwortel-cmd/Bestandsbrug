@@ -135,3 +135,13 @@ tools/Toegankelijkheid.ps1  FlaUI-controle (zelfde script als in Jaaps andere pr
   Bestandsbrug.html, "Over Bestandsbrug - About Filebridge.txt" en de twee privacybestanden (geen versie.txt). Installatiefout "Cannot focus a disabled or
   invisible window" opgelost (focus alleen op een zichtbare, ingeschakelde knop in CurPageChanged).
 - Jaap: Controleren op updates werkt met zijn Dropbox-map (1.0.0 stond erin).
+
+## Ondertekenen (Jaap, 18 nov 2026)
+
+- Elk nieuw programma en elke nieuwe versie (.exe en installatiebestand) wordt ondertekend met Jaaps eigen certificaat
+  "CN=Jaap Wortel" (zelfgemaakt, geldig tot 18 nov 2031, SHA1-vingerafdruk 5E:93:31:C6:8A:1C:D3:A2:98:16:74:78:AF:06:CE:82:F4:19:5A:E1).
+  Het openbare deel staat in `Certificaat Jaap Wortel.cer` in deze repo.
+- Jaap ondertekent niet zelf: Claude doet het, zonder dat Jaap daarom hoeft te vragen.
+- Deze repo is OPENBAAR: de geheime sleutel komt hier nooit in, ook niet in een log of zip. Waar de sleutel staat, staat
+  in de afspraken van Jaaps privé-programma's (bijvoorbeeld Webbox-Playlist-Maker).
+- Eerlijk tegen Jaap: Windows SmartScreen blijft waarschuwen, want het is een zelfgemaakt certificaat.
